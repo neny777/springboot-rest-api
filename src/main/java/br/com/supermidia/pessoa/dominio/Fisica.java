@@ -2,7 +2,9 @@ package br.com.supermidia.pessoa.dominio;
 
 import java.time.LocalDate;
 
+import br.com.supermidia.converter.UppercaseConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,6 +20,7 @@ public class Fisica extends Pessoa {
 	private String cpf;
 	@Size(max = 14, message = "O rg deve ter no máximo 14 caracteres.")
 	@Column(unique = true)
+	@Convert(converter = UppercaseConverter.class)
 	private String rg;
 	@Enumerated(EnumType.STRING)
 	private Sexo sexo;

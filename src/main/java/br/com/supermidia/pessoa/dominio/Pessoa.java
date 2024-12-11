@@ -29,7 +29,7 @@ public abstract class Pessoa implements Serializable {
 	private UUID id;
 	@NotNull(message = "O nome é obrigatório.")
 	@Size(max = 60, message = "O nome deve ter no máximo 60 caracteres.")
-	@Convert(converter = UppercaseConverter.class)	
+	@Convert(converter = UppercaseConverter.class)
 	private String nome;
 	@Email(message = "O e-mail deve ser válido.")
 	@Size(max = 70, message = "O e-mail deve ter no máximo 70 caracteres.")

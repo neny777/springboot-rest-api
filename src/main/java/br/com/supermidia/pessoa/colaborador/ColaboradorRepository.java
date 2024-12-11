@@ -1,4 +1,4 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.colaborador;
 
 import java.util.UUID;
 

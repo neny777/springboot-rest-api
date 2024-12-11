@@ -1,4 +1,4 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.colaborador;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,12 +18,11 @@ import jakarta.validation.constraints.Size;
 public class Colaborador {
 	@Id
 	private UUID id;
-	@Size(max = 100, message = "A descrição função deve ter no máximo 100 caracteres.")
-	private String funcao;
+
 	@Size(max = 15, message = "O número da carteira de trabalho deve ter no máximo 15 caracteres.")	
 	@Column(unique = true)
 	private String ctps;
-	private Double salario;
+
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "pessoa_id")
@@ -36,14 +35,6 @@ public class Colaborador {
 	public void setId(UUID id) {
 		this.id = id;
 	}
-	
-	public String getFuncao() {
-		return funcao;
-	}
-
-	public void setFuncao(String funcao) {
-		this.funcao = funcao;
-	}
 
 	public String getCtps() {
 		return ctps;
@@ -51,14 +42,6 @@ public class Colaborador {
 
 	public void setCtps(String ctps) {
 		this.ctps = ctps;
-	}
-
-	public Double getSalario() {
-		return salario;
-	}
-
-	public void setSalario(Double salario) {
-		this.salario = salario;
 	}
 
 	public Fisica getFisica() {
