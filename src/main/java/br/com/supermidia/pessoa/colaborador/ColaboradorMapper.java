@@ -19,7 +19,7 @@ public interface ColaboradorMapper {
 	@Mapping(target = "fisica.cpf", source = "cpf")
 	@Mapping(target = "fisica.rg", source = "rg")
 	@Mapping(target = "fisica.sexo", source = "sexo")
-	@Mapping(target = "fisica.dataNascimento", source = "dataNascimento")
+	@Mapping(target = "fisica.dataNascimento", source = "nascimento")
 	Colaborador toEntity(ColaboradorDTO dto);
 	
 	
@@ -35,7 +35,7 @@ public interface ColaboradorMapper {
 	@Mapping(target = "cpf", source = "fisica.cpf")
 	@Mapping(target = "rg", source = "fisica.rg")
 	@Mapping(target = "sexo", source = "fisica.sexo")
-	@Mapping(target = "dataNascimento", source = "fisica.dataNascimento")
+	@Mapping(target = "nascimento", source = "fisica.dataNascimento")
 	ColaboradorDTO toDto(Colaborador entity);
 
 	@Mapping(target = "fisica.nome", source = "nome")
@@ -50,6 +50,6 @@ public interface ColaboradorMapper {
 	@Mapping(target = "fisica.cpf", source = "cpf")
 	@Mapping(target = "fisica.rg", source = "rg")
 	@Mapping(target = "fisica.sexo", source = "sexo")
-	@Mapping(target = "fisica.dataNascimento", source = "dataNascimento")
+	@Mapping(target = "fisica.dataNascimento", source = "nascimento")
 	void updateEntityFromDto(ColaboradorDTO dto, @MappingTarget Colaborador entity);
 }

@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import br.com.supermidia.pessoa.dominio.Fisica;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,7 +24,7 @@ public class Colaborador {
 	@Column(unique = true)
 	private String ctps;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@MapsId
 	@JoinColumn(name = "pessoa_id")
 	private Fisica fisica;

@@ -40,7 +40,7 @@ public class ColaboradorDTO {
 	private String rg;
 	@NotNull(message = "O sexo é obrigatório.")
 	private Fisica.Sexo sexo;
-	private LocalDate dataNascimento;
+	private LocalDate nascimento;
 
 	// Getters e Setters
 	public UUID getId() {
@@ -155,11 +155,11 @@ public class ColaboradorDTO {
 		this.sexo = sexo;
 	}
 
-	public LocalDate getDataNascimento() {
-		return dataNascimento;
+	public LocalDate getNascimento() {
+		return nascimento;
 	}
 
-	public void setDataNascimento(LocalDate dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
+	public void setNascimento(LocalDate nascimento) {
+		this.nascimento = nascimento;
+	}	
 }
