@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import br.com.supermidia.pessoa.dominio.Fisica;
+import br.com.supermidia.validation.CPF;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -34,6 +35,7 @@ public class ColaboradorDTO {
 	private String municipio;
 	@Size(min = 2, max = 2, message = "O estado deve conter 2 caracteres.")
 	private String uf;
+	@CPF(message = "CPF inválido")
 	@Size(max = 14, message = "O CPF deve ter no máximo 14 caracteres.")
 	private String cpf;
 	@Size(max = 14, message = "O RG deve ter no máximo 14 caracteres.")

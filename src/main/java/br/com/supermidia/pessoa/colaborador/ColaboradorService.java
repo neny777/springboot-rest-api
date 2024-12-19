@@ -38,19 +38,15 @@ public class ColaboradorService {
 
 	// Atualizar o colaborador existente com os dados do ColaboradorDTO
 	public Colaborador updateColaborador(Colaborador colaboradorExistente, ColaboradorDTO colaboradorDTO) {
+		validarAtributosUnicos(colaboradorDTO, colaboradorExistente.getId());
 		colaboradorMapper.updateEntityFromDto(colaboradorDTO, colaboradorExistente);
 		return colaboradorRepository.save(colaboradorExistente);
 	}
 
 	// Método para salvar um ColaboradorDTO (conversão do DTO para entity)
-	public Colaborador saveColaborador(ColaboradorDTO colaboradorDTO) {
+	public Colaborador saveColaborador(ColaboradorDTO colaboradorDTO, UUID id) {
 
-		validarNomeUnico(colaboradorDTO.getNome());
-		validarEmailUnico(colaboradorDTO.getEmail());
-		validarTelefoneUnico(colaboradorDTO.getTelefone());
-		validarRgUnico(colaboradorDTO.getRg());
-		validarCpfUnico(colaboradorDTO.getCpf());
-		validarCtpsUnico(colaboradorDTO.getCtps());
+		validarAtributosUnicos(colaboradorDTO, id);
 
 		try {
 			Colaborador colaborador = colaboradorMapper.toEntity(colaboradorDTO);
@@ -65,39 +61,85 @@ public class ColaboradorService {
 		colaboradorRepository.deleteById(id);
 	}
 
-	private void validarNomeUnico(String nome) {
-		if (colaboradorRepository.existsByFisicaNome(nome)) {
+	private void validarNomeUnico(String nome, UUID id) {
+		 if (nome == null) return;
+		Colaborador existente = colaboradorRepository.getByFisicaNome(nome);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
 			throw new IllegalArgumentException("Nome já cadastrado: " + nome);
 		}
 	}
 
-	private void validarEmailUnico(String email) {
-		if (colaboradorRepository.existsByFisicaEmail(email)) {
-			throw new IllegalArgumentException("O email já cadastrado: " + email);
+	private void validarEmailUnico(String email, UUID id) {
+		 if (email == null) return;
+		Colaborador existente = colaboradorRepository.getByFisicaEmail(email);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
+			throw new IllegalArgumentException("Email já cadastrado: " + email);
 		}
 	}
 
-	private void validarTelefoneUnico(String telefone) {
-		if (colaboradorRepository.existsByFisicaTelefone(telefone)) {
+	private void validarTelefoneUnico(String telefone, UUID id) {
+		 if (telefone == null) return;
+		Colaborador existente = colaboradorRepository.getByFisicaTelefone(telefone);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
 			throw new IllegalArgumentException("Telefone já cadastrado: " + telefone);
 		}
 	}
 
-	private void validarRgUnico(String rg) {
-		if (colaboradorRepository.existsByFisicaRg(rg)) {
+	private void validarRgUnico(String rg, UUID id) {
+		 if (rg == null) return;
+		Colaborador existente = colaboradorRepository.getByFisicaRg(rg);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
 			throw new IllegalArgumentException("RG já cadastrado: " + rg);
 		}
 	}
 
-	private void validarCpfUnico(String cpf) {
-		if (colaboradorRepository.existsByFisicaCpf(cpf)) {
+	private void validarCpfUnico(String cpf, UUID id) {
+		 if (cpf == null) return;
+		Colaborador existente = colaboradorRepository.getByFisicaCpf(cpf);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
 			throw new IllegalArgumentException("CPF já cadastrado: " + cpf);
 		}
 	}
 
-	private void validarCtpsUnico(String ctps) {
-		if (colaboradorRepository.existsByCtps(ctps)) {
+	private void validarCtpsUnico(String ctps, UUID id) {
+		 if (ctps == null) return;
+		Colaborador existente = colaboradorRepository.getByCtps(ctps);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
 			throw new IllegalArgumentException("CTPS já cadastrado: " + ctps);
 		}
+	}
+
+	private void validarAtributosUnicos(ColaboradorDTO colaboradorDTO, UUID id) {
+		validarNomeUnico(colaboradorDTO.getNome(), id);
+		validarEmailUnico(colaboradorDTO.getEmail(), id);
+		validarTelefoneUnico(colaboradorDTO.getTelefone(), id);
+		validarRgUnico(colaboradorDTO.getRg(), id);
+		validarCpfUnico(colaboradorDTO.getCpf(), id);
+		validarCtpsUnico(colaboradorDTO.getCtps(), id);
+	}
+	
+	public void validarAtributoUnico(String campo, String valor, UUID id) {
+	    switch (campo) {
+	        case "nome":
+	            validarNomeUnico(valor, id);
+	            break;
+	        case "email":
+	            validarEmailUnico(valor, id);
+	            break;
+	        case "telefone":
+	            validarTelefoneUnico(valor, id);
+	            break;
+	        case "cpf":
+	            validarCpfUnico(valor, id);
+	            break;
+	        case "rg":
+	            validarRgUnico(valor, id);
+	            break;
+	        case "ctps":
+	            validarCtpsUnico(valor, id);
+	            break;
+	        default:
+	            throw new IllegalArgumentException("Campo inválido: " + campo);
+	    }
 	}
 }
