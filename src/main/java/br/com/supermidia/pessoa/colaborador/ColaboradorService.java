@@ -2,6 +2,7 @@ package br.com.supermidia.pessoa.colaborador;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,8 @@ public class ColaboradorService {
 
 	// Método para encontrar um colaborador por ID e retornar um DTO
 	public ColaboradorDTO findById(UUID id) {
-		Colaborador colaborador = colaboradorRepository.findById(id)
+		return colaboradorRepository.findById(id).map(colaboradorMapper::toDto)
 				.orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
-		return colaboradorMapper.toDto(colaborador);
 	}
 
 	// Buscar a entity Colaborador por ID (para fins de atualização)
@@ -61,85 +61,54 @@ public class ColaboradorService {
 		colaboradorRepository.deleteById(id);
 	}
 
-	private void validarNomeUnico(String nome, UUID id) {
-		 if (nome == null) return;
-		Colaborador existente = colaboradorRepository.getByFisicaNome(nome);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			throw new IllegalArgumentException("Nome já cadastrado: " + nome);
-		}
-	}
-
-	private void validarEmailUnico(String email, UUID id) {
-		 if (email == null) return;
-		Colaborador existente = colaboradorRepository.getByFisicaEmail(email);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			throw new IllegalArgumentException("Email já cadastrado: " + email);
-		}
-	}
-
-	private void validarTelefoneUnico(String telefone, UUID id) {
-		 if (telefone == null) return;
-		Colaborador existente = colaboradorRepository.getByFisicaTelefone(telefone);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			throw new IllegalArgumentException("Telefone já cadastrado: " + telefone);
-		}
-	}
-
-	private void validarRgUnico(String rg, UUID id) {
-		 if (rg == null) return;
-		Colaborador existente = colaboradorRepository.getByFisicaRg(rg);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			throw new IllegalArgumentException("RG já cadastrado: " + rg);
-		}
-	}
-
-	private void validarCpfUnico(String cpf, UUID id) {
-		 if (cpf == null) return;
-		Colaborador existente = colaboradorRepository.getByFisicaCpf(cpf);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			throw new IllegalArgumentException("CPF já cadastrado: " + cpf);
-		}
-	}
-
-	private void validarCtpsUnico(String ctps, UUID id) {
-		 if (ctps == null) return;
-		Colaborador existente = colaboradorRepository.getByCtps(ctps);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			throw new IllegalArgumentException("CTPS já cadastrado: " + ctps);
-		}
-	}
-
 	private void validarAtributosUnicos(ColaboradorDTO colaboradorDTO, UUID id) {
-		validarNomeUnico(colaboradorDTO.getNome(), id);
-		validarEmailUnico(colaboradorDTO.getEmail(), id);
-		validarTelefoneUnico(colaboradorDTO.getTelefone(), id);
-		validarRgUnico(colaboradorDTO.getRg(), id);
-		validarCpfUnico(colaboradorDTO.getCpf(), id);
-		validarCtpsUnico(colaboradorDTO.getCtps(), id);
+		validarUnicidade(colaboradorDTO.getNome(), id, "Nome", colaboradorRepository::getByFisicaNome);
+		validarUnicidade(colaboradorDTO.getEmail(), id, "Email", colaboradorRepository::getByFisicaEmail);
+		validarUnicidade(colaboradorDTO.getTelefone(), id, "Telefone", colaboradorRepository::getByFisicaTelefone);
+		validarUnicidade(colaboradorDTO.getRg(), id, "RG", colaboradorRepository::getByFisicaRg);
+		validarUnicidade(colaboradorDTO.getCpf(), id, "CPF", colaboradorRepository::getByFisicaCpf);
+		validarUnicidade(colaboradorDTO.getCtps(), id, "CTPS", colaboradorRepository::getByCtps);
+	}
+
+	private void validarUnicidade(String valor, UUID id, String campo, Function<String, Colaborador> buscaPorCampo) {
+		if (valor == null)
+			return;
+		Colaborador existente = buscaPorCampo.apply(valor);
+		if (existente != null && (id == null || !existente.getId().equals(id))) {
+			lançarExceçãoDuplicado(campo, valor);
+		}
 	}
 	
 	public void validarAtributoUnico(String campo, String valor, UUID id) {
-	    switch (campo) {
+	    if (valor == null || valor.isBlank()) {
+	        throw new IllegalArgumentException("O valor para validação não pode ser nulo ou vazio.");
+	    }
+
+	    switch (campo.toLowerCase()) {
 	        case "nome":
-	            validarNomeUnico(valor, id);
+	            validarUnicidade(valor, id, "Nome", colaboradorRepository::getByFisicaNome);
 	            break;
 	        case "email":
-	            validarEmailUnico(valor, id);
+	            validarUnicidade(valor, id, "Email", colaboradorRepository::getByFisicaEmail);
 	            break;
 	        case "telefone":
-	            validarTelefoneUnico(valor, id);
+	            validarUnicidade(valor, id, "Telefone", colaboradorRepository::getByFisicaTelefone);
 	            break;
 	        case "cpf":
-	            validarCpfUnico(valor, id);
+	            validarUnicidade(valor, id, "CPF", colaboradorRepository::getByFisicaCpf);
 	            break;
 	        case "rg":
-	            validarRgUnico(valor, id);
+	            validarUnicidade(valor, id, "RG", colaboradorRepository::getByFisicaRg);
 	            break;
 	        case "ctps":
-	            validarCtpsUnico(valor, id);
+	            validarUnicidade(valor, id, "CTPS", colaboradorRepository::getByCtps);
 	            break;
 	        default:
-	            throw new IllegalArgumentException("Campo inválido: " + campo);
+	            throw new IllegalArgumentException("Campo inválido para validação: " + campo);
 	    }
+	}
+
+	private void lançarExceçãoDuplicado(String campo, String valor) {
+		throw new IllegalArgumentException(campo + " já cadastrado: " + valor);
 	}
 }

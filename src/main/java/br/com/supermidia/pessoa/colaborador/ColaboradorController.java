@@ -56,21 +56,19 @@ public class ColaboradorController {
 	}
 
 	@GetMapping("/validate/{campo}")
-	public ResponseEntity<Map<String, Boolean>> validarUnico(
-	        @PathVariable String campo,
-	        @RequestParam String valor,
-	        @RequestParam(required = false) UUID id) {
+	public ResponseEntity<Map<String, Boolean>> validarUnico(@PathVariable String campo, @RequestParam String valor,
+			@RequestParam(required = false) UUID id) {
 
-	    boolean isUnique;
+		boolean isUnique;
 
-	    try {
-	        colaboradorService.validarAtributoUnico(campo, valor, id);
-	        isUnique = true;
-	    } catch (IllegalArgumentException e) {
-	        isUnique = false;
-	    }
+		try {
+			colaboradorService.validarAtributoUnico(campo, valor, id);
+			isUnique = true; // Não lançou exceção, então é único
+		} catch (IllegalArgumentException e) {
+			isUnique = false;
+		}
 
-	    Map<String, Boolean> response = Map.of("unico", isUnique);
-	    return ResponseEntity.ok(response);
+		return ResponseEntity.ok(Map.of("unico", isUnique));
 	}
+
 }
