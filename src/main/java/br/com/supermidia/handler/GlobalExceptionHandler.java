@@ -59,6 +59,11 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
 		return buildErrorResponse("error","Erro interno no servidor.", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+	    return buildErrorResponse("runtime_error", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	// Método utilitário para criar uma resposta JSON
 	private ResponseEntity<Map<String, String>> buildErrorResponse(String type, String message, HttpStatus status) {

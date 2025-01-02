@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import br.com.supermidia.converter.LowercaseConverter;
 import br.com.supermidia.converter.UppercaseConverter;
 import jakarta.persistence.Column;
@@ -22,6 +24,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "pessoas")
+@DynamicUpdate
 public abstract class Pessoa implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id

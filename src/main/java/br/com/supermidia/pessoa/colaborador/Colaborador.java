@@ -3,7 +3,11 @@ package br.com.supermidia.pessoa.colaborador;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import br.com.supermidia.pessoa.dominio.Fisica;
+import br.com.supermidia.pessoa.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +32,11 @@ public class Colaborador {
 	@MapsId
 	@JoinColumn(name = "pessoa_id")
 	private Fisica fisica;
+	
+	@JsonIgnore
+	@JsonManagedReference
+	@OneToOne(mappedBy = "colaborador", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Usuario usuario;
 
 	public UUID getId() {
 		return id;
@@ -53,19 +62,24 @@ public class Colaborador {
 		this.fisica = fisica;
 	}
 
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(id);
-		return result;
+		return Objects.hash(id);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;

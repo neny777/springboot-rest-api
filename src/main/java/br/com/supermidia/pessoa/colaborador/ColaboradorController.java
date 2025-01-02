@@ -26,15 +26,21 @@ public class ColaboradorController {
 	// Endpoint para buscar um colaborador por ID
 	@GetMapping("/{id}")
 	public ResponseEntity<ColaboradorDTO> findById(@PathVariable UUID id) {
-		ColaboradorDTO colaborador = colaboradorService.findById(id);
+		ColaboradorDTO colaborador = colaboradorService.dtoFindById(id);
 		return ResponseEntity.ok(colaborador);
+	}
+	
+	@GetMapping("/nao-usuario")
+	public ResponseEntity<List<ColaboradorDTO>> findColaboradoresSemUsuario() {
+	    List<ColaboradorDTO> colaboradoresNaoUsuario = colaboradorService.dtoFindAllNotUser();
+	    return ResponseEntity.ok(colaboradoresNaoUsuario);
 	}
 
 	// Endpoint para criar um novo colaborador
 	@PostMapping
 	public ResponseEntity<ColaboradorDTO> create(@Validated @RequestBody ColaboradorDTO colaboradorDTO) {
-		Colaborador colaborador = colaboradorService.saveColaborador(colaboradorDTO, null);
-		ColaboradorDTO createdColaborador = colaboradorService.findById(colaborador.getId());
+		Colaborador colaborador = colaboradorService.save(colaboradorDTO, null);
+		ColaboradorDTO createdColaborador = colaboradorService.dtoFindById(colaborador.getId());
 		return ResponseEntity.ok(createdColaborador);
 	}
 
@@ -42,9 +48,9 @@ public class ColaboradorController {
 	@PutMapping("/{id}")
 	public ResponseEntity<ColaboradorDTO> update(@PathVariable UUID id,
 			@Validated @RequestBody ColaboradorDTO colaboradorDTO) {
-		Colaborador colaboradorExistente = colaboradorService.findEntityById(id);
-		Colaborador colaboradorAtualizado = colaboradorService.updateColaborador(colaboradorExistente, colaboradorDTO);
-		ColaboradorDTO updatedColaborador = colaboradorService.findById(colaboradorAtualizado.getId());
+		Colaborador colaboradorExistente = colaboradorService.findById(id);
+		Colaborador colaboradorAtualizado = colaboradorService.update(colaboradorExistente, colaboradorDTO);
+		ColaboradorDTO updatedColaborador = colaboradorService.dtoFindById(colaboradorAtualizado.getId());
 		return ResponseEntity.ok(updatedColaborador);
 	}
 

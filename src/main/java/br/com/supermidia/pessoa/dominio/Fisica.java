@@ -2,6 +2,8 @@ package br.com.supermidia.pessoa.dominio;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import br.com.supermidia.converter.UppercaseConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -13,6 +15,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "pessoas_fisica")
+@DynamicUpdate
 public class Fisica extends Pessoa {
 	private static final long serialVersionUID = 1L;
 	@Size(max = 14, message = "O cpf deve ter no máximo 14 caracteres.")
@@ -70,5 +73,5 @@ public class Fisica extends Pessoa {
 		public String getDescricao() {
 			return descricao;
 		}
-	}
+	}	
 }

@@ -20,6 +20,7 @@ public interface ColaboradorMapper {
 	@Mapping(target = "fisica.rg", source = "rg")
 	@Mapping(target = "fisica.sexo", source = "sexo")
 	@Mapping(target = "fisica.dataNascimento", source = "nascimento")
+	@Mapping(target = "usuario", ignore = true) // Ignorar campo "usuario"
 	Colaborador toEntity(ColaboradorDTO dto);
 	
 	
@@ -51,5 +52,6 @@ public interface ColaboradorMapper {
 	@Mapping(target = "fisica.rg", source = "rg")
 	@Mapping(target = "fisica.sexo", source = "sexo")
 	@Mapping(target = "fisica.dataNascimento", source = "nascimento")
+	@Mapping(target = "usuario", ignore = true) // Ignorar campo "usuario"
 	void updateEntityFromDto(ColaboradorDTO dto, @MappingTarget Colaborador entity);
 }

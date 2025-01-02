@@ -1,11 +1,14 @@
 package br.com.supermidia.pessoa.dominio;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "pessoas_juridica")
+@DynamicUpdate
 public class Juridica extends Pessoa {
 	private static final long serialVersionUID = 1L;
 	@Size(max = 18, message = "O cnpj deve ter no máximo 18 caracteres.")

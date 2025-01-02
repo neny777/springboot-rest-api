@@ -26,25 +26,35 @@ public class ColaboradorService {
 	}
 
 	// Método para encontrar um colaborador por ID e retornar um DTO
-	public ColaboradorDTO findById(UUID id) {
+	public ColaboradorDTO dtoFindById(UUID id) {
 		return colaboradorRepository.findById(id).map(colaboradorMapper::toDto)
 				.orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
 	}
+	
+	// Método para encontrar todos colaboradores não usuários e retornar um DTO
+	public List<ColaboradorDTO> dtoFindAllNotUser() {
+	    List<Colaborador> colaboradores = colaboradorRepository.findAll();
+	    return colaboradores.stream()
+	            .filter(colaborador -> colaborador.getUsuario() == null)
+	            .map(colaboradorMapper::toDto)
+	            .collect(Collectors.toList());
+	}
+
 
 	// Buscar a entity Colaborador por ID (para fins de atualização)
-	public Colaborador findEntityById(UUID id) {
+	public Colaborador findById(UUID id) {
 		return colaboradorRepository.findById(id).orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
 	}
 
 	// Atualizar o colaborador existente com os dados do ColaboradorDTO
-	public Colaborador updateColaborador(Colaborador colaboradorExistente, ColaboradorDTO colaboradorDTO) {
+	public Colaborador update(Colaborador colaboradorExistente, ColaboradorDTO colaboradorDTO) {
 		validarAtributosUnicos(colaboradorDTO, colaboradorExistente.getId());
 		colaboradorMapper.updateEntityFromDto(colaboradorDTO, colaboradorExistente);
 		return colaboradorRepository.save(colaboradorExistente);
 	}
 
 	// Método para salvar um ColaboradorDTO (conversão do DTO para entity)
-	public Colaborador saveColaborador(ColaboradorDTO colaboradorDTO, UUID id) {
+	public Colaborador save(ColaboradorDTO colaboradorDTO, UUID id) {
 
 		validarAtributosUnicos(colaboradorDTO, id);
 
