@@ -48,6 +48,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioDTO); // Retorna o DTO	
 	}
 	
+	@GetMapping("/email/{email}")
+	public ResponseEntity<UsuarioDTO> buscarPorEmail(@PathVariable String email) {
+		UsuarioDTO usuarioDTO = usuarioService.findByEmail(email); // Chama o serviço
+        return ResponseEntity.ok(usuarioDTO); // Retorna o DTO	
+	}
+	
 	// Endpoint para excluir usuário por ID
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> excluirPorId(@PathVariable UUID id) {

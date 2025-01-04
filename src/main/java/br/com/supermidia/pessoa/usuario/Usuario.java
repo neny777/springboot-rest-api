@@ -1,10 +1,14 @@
 package br.com.supermidia.pessoa.usuario;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -12,6 +16,7 @@ import br.com.supermidia.pessoa.colaborador.Colaborador;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
@@ -22,7 +27,12 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "usuarios")
 @DynamicUpdate
-public class Usuario {
+public class Usuario implements UserDetails {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	private UUID id;
@@ -31,7 +41,7 @@ public class Usuario {
 	@Column
 	private String senha;
 
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<UsuarioPermissoes> permissoes = new HashSet<>();
 
 	@OneToOne
@@ -70,4 +80,40 @@ public class Usuario {
 	public void setColaborador(Colaborador colaborador) {
 		this.colaborador = colaborador;
 	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return permissoes.stream().map(permissao -> new SimpleGrantedAuthority(permissao.getNome()))
+				.toList();
+	}
+
+	@Override
+	public String getPassword() {		
+		return senha;
+	}
+
+	@Override
+	public String getUsername() {		
+		return colaborador.getFisica().getEmail();
+	}
+	
+	@Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

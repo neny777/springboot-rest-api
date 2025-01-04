@@ -103,4 +103,10 @@ public class UsuarioService {
 
 		System.out.println("Usuário excluído com sucesso.");
 	}
+
+	public UsuarioDTO findByEmail(String email) {
+		Usuario usuario = usuarioRepository.findByFisicaEmail(email)
+				.orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+		return usuarioMapper.toResponse(usuario); // Converte para DTO
+	}
 }
