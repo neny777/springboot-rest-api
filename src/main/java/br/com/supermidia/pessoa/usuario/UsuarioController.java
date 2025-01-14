@@ -1,10 +1,13 @@
 package br.com.supermidia.pessoa.usuario;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,5 +62,19 @@ public class UsuarioController {
 	public ResponseEntity<Void> excluirPorId(@PathVariable UUID id) {
 	    usuarioService.deleteById(id);
 	    return ResponseEntity.noContent().build();
+	}
+	// Endpoint para validar o token
+	@GetMapping("/validate-token")
+	public ResponseEntity<?> validateToken() {
+	    try {
+	        // Verifica se o token é válido
+	        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+	        // Retorna uma mensagem de sucesso com o usuário autenticado
+	        return ResponseEntity.ok(Map.of("message", "Token válido", "user", userDetails.getUsername()));
+	    } catch (Exception e) {
+	        // Retorna erro se o token for inválido
+	        return ResponseEntity.status(401).body(Map.of("error", "Token inválido"));
+	    }
 	}
 }

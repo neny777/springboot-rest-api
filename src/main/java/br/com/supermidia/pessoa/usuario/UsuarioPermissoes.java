@@ -29,8 +29,7 @@ public class UsuarioPermissoes {
 	private UUID id;
 
 	@NotNull(message = "O nome é obrigatório.")
-	@Size(max = 60, message = "O nome deve ter no máximo 60 caracteres.")
-	@Convert(converter = LowercaseConverter.class)
+	@Size(max = 60, message = "O nome deve ter no máximo 60 caracteres.")	
 	private String nome;
 
 	@JsonIgnore
