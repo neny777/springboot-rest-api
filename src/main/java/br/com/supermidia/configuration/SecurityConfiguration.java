@@ -34,8 +34,9 @@ public class SecurityConfiguration {
 		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
 				//.requestMatchers("/**").permitAll()
 				// Permitir endpoints públicos
-				.requestMatchers("/api/health").permitAll().requestMatchers("/api/auth/**").permitAll()
+				.requestMatchers("/api/health").permitAll().requestMatchers("/api/authentication/**").permitAll()
 				.requestMatchers("/api/usuarios/validate-token").permitAll()
+				.requestMatchers("/api/password/**").permitAll()
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permitir OPTIONS
 				.requestMatchers("/api/colaboradores/**").hasRole("colaboradores").requestMatchers("/api/usuarios/**")
 				.hasRole("usuarios"))

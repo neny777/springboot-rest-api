@@ -1,4 +1,4 @@
-package br.com.supermidia.pessoa.usuario;
+package br.com.supermidia.security;
 
 public class LoginUserDto {
     private String email;

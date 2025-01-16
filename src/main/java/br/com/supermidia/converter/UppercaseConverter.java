@@ -8,7 +8,7 @@ public class UppercaseConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
-        return attribute != null ? attribute.toUpperCase() : null;
+        return attribute != null ? attribute.toUpperCase().trim() : null;
     }
 
     @Override

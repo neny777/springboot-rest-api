@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.supermidia.pessoa.usuario.LoginUserDto;
 import br.com.supermidia.pessoa.usuario.Usuario;
 
-@RequestMapping("/api/auth")
+@RequestMapping("/api/authentication")
 @RestController
 public class AuthenticationController {
 	private final JwtService jwtService;
@@ -39,4 +38,10 @@ public class AuthenticationController {
 
 		return ResponseEntity.ok(loginResponse);
 	}
+	
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout() {
+	    // Qualquer lógica adicional, como logs de auditoria, pode ser inserida aqui
+	    return ResponseEntity.noContent().build();
+	}	
 }

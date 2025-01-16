@@ -9,5 +9,4 @@ public class SupermidiaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SupermidiaApplication.class, args);
 	}
-
 }

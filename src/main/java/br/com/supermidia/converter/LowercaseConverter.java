@@ -8,7 +8,7 @@ public class LowercaseConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
-        return attribute != null ? attribute.toLowerCase() : null;
+        return attribute != null ? attribute.toLowerCase().trim() : null;
     }
 
     @Override

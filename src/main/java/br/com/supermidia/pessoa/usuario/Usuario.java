@@ -29,9 +29,6 @@ import jakarta.persistence.Table;
 @DynamicUpdate
 public class Usuario implements UserDetails {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id

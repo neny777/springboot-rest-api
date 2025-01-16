@@ -9,10 +9,9 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsConfig {
 
-    @Bean
-    CorsFilter corsFilter() {
-		System.out.println("Configuração de CORS carregada.");
-		
+	@Bean
+	CorsFilter corsFilter() {
+
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 
 		// Permitir o domínio do frontend

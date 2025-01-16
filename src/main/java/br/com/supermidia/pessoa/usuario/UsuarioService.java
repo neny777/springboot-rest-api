@@ -44,7 +44,11 @@ public class UsuarioService {
 		usuario.setColaborador(colaborador);
 
 		// Criptografar senha
-		usuario.setSenha(passwordEncoder.encode("123"));
+		//usuario.setSenha(passwordEncoder.encode("123"));
+		
+		// Gerar senha aleatória com base no UUID
+	    String senhaAleatoria = UUID.randomUUID().toString().replace("-", ""); // Exemplo: 8 caracteres
+	    usuario.setSenha(passwordEncoder.encode(senhaAleatoria));
 
 		// Persistir
 		return usuarioRepository.save(usuario);
