@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -64,6 +65,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
 	    return buildErrorResponse("runtime_error", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException ex) {
+	    return buildErrorResponse("authentication_error", "Usuário e senha inválidos", HttpStatus.UNAUTHORIZED);
+	}
+
 
 	// Método utilitário para criar uma resposta JSON
 	private ResponseEntity<Map<String, String>> buildErrorResponse(String type, String message, HttpStatus status) {

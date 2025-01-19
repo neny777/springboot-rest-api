@@ -1,9 +1,11 @@
 package br.com.supermidia.security;
 
 import java.io.IOException;
+
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -61,6 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 			filterChain.doFilter(request, response);
+			
+		} catch (AuthenticationException authenticationException) {
+		    SecurityContextHolder.clearContext();
+		    throw authenticationException;
 		} catch (Exception exception) {
 			handlerExceptionResolver.resolveException(request, response, null, exception);
 		}

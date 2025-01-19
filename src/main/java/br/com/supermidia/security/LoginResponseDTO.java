@@ -1,6 +1,6 @@
 package br.com.supermidia.security;
 
-public class LoginResponse {
+public class LoginResponseDTO {
 	    
     private String token;
     private long expiresIn;
@@ -9,7 +9,7 @@ public class LoginResponse {
         return token;
     }
 
-    public LoginResponse setToken(String token) {
+    public LoginResponseDTO setToken(String token) {
         this.token = token;
         return this;
     }
@@ -18,7 +18,7 @@ public class LoginResponse {
         return expiresIn;
     }
 
-    public LoginResponse setExpiresIn(long expiresIn) {
+    public LoginResponseDTO setExpiresIn(long expiresIn) {
         this.expiresIn = expiresIn;
         return this;
     }

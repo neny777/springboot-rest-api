@@ -16,6 +16,7 @@ public interface UsuarioMapper {
 	@Mapping(target = "senha", ignore = true)
 	@Mapping(target = "permissoes", expression = "java(mapPermissoes(usuarioDTO.getPermissoes(), usuario))")
 	@Mapping(target = "colaborador", ignore = true)
+	@Mapping(target = "authorities", ignore = true)
 	Usuario toEntity(UsuarioDTO usuarioDTO);
 
 	@Mapping(target = "id", source = "colaborador.id")
