@@ -41,7 +41,7 @@ public class SecurityConfiguration {
 				.requestMatchers("/api/usuarios/validate-token").permitAll().requestMatchers("/api/password/**")
 				.permitAll().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permitir OPTIONS
 				.requestMatchers("/api/colaboradores/**").hasRole("colaboradores").requestMatchers("/api/usuarios/**")
-				.hasRole("usuarios"))
+				.hasRole("usuarios").requestMatchers("/api/clientes/**").hasRole("clientes"))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

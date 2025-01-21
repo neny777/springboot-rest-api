@@ -32,7 +32,7 @@ public class UsuarioService {
 		Colaborador colaborador = colaboradorService.findById(usuarioDTO.getId());
 
 		if (colaborador == null) {
-			throw new IllegalArgumentException("Colaborador não encontrado para o ID fornecido.");
+			throw new IllegalArgumentException("Colaborador não encontrado.");
 		}
 
 		if (colaborador.getUsuario() != null) {
@@ -44,11 +44,11 @@ public class UsuarioService {
 		usuario.setColaborador(colaborador);
 
 		// Criptografar senha
-		//usuario.setSenha(passwordEncoder.encode("123"));
-		
+		// usuario.setSenha(passwordEncoder.encode("123"));
+
 		// Gerar senha aleatória com base no UUID
-	    String senhaAleatoria = UUID.randomUUID().toString().replace("-", ""); // Exemplo: 8 caracteres
-	    usuario.setSenha(passwordEncoder.encode(senhaAleatoria));
+		String senhaAleatoria = gerarSenhaAleatoria();
+		usuario.setSenha(passwordEncoder.encode(senhaAleatoria));
 
 		// Persistir
 		return usuarioRepository.save(usuario);
@@ -112,5 +112,9 @@ public class UsuarioService {
 		Usuario usuario = usuarioRepository.findByFisicaEmail(email)
 				.orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 		return usuarioMapper.toResponse(usuario); // Converte para DTO
+	}
+
+	private String gerarSenhaAleatoria() {
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 }

@@ -80,37 +80,36 @@ public class Usuario implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return permissoes.stream().map(permissao -> new SimpleGrantedAuthority(permissao.getNome()))
-				.toList();
+		return permissoes.stream().map(permissao -> new SimpleGrantedAuthority(permissao.getNome())).toList();
 	}
 
 	@Override
-	public String getPassword() {		
+	public String getPassword() {
 		return senha;
 	}
 
 	@Override
-	public String getUsername() {		
+	public String getUsername() {
 		return colaborador.getFisica().getEmail();
 	}
-	
+
 	@Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

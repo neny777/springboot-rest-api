@@ -73,5 +73,5 @@ public class Fisica extends Pessoa {
 		public String getDescricao() {
 			return descricao;
 		}
-	}	
+	}
 }

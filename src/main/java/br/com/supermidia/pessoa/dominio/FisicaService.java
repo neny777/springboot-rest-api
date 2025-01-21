@@ -1,32 +1,33 @@
 package br.com.supermidia.pessoa.dominio;
 
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FisicaService {
+	private final FisicaRepository fisicaRepository;
 
-    private final FisicaRepository pessoaFisicaRepository;
+	public FisicaService(FisicaRepository fisicaRepository) {
+		this.fisicaRepository = fisicaRepository;
+	}
 
-    public FisicaService(FisicaRepository pessoaFisicaRepository) {
-        this.pessoaFisicaRepository = pessoaFisicaRepository;
-    }
+	public Fisica cadastrarOuAtualizar(Fisica fisica) {
+		validarAtributosUnicos(fisica);
+		return fisicaRepository.save(fisica);
+	}
 
-    public List<Fisica> findAll() {
-        return pessoaFisicaRepository.findAll();
-    }
+	private void validarAtributosUnicos(Fisica fisica) {
 
-    public Fisica findById(UUID id) {
-        return pessoaFisicaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pessoa Física não encontrada"));
-    }
-
-    public Fisica save(Fisica pessoaFisica) {
-        return pessoaFisicaRepository.save(pessoaFisica);
-    }
-
-    public void delete(UUID id) {
-        pessoaFisicaRepository.deleteById(id);
-    }
+		if (fisica.getCpf() != null && fisicaRepository.findByCpf(fisica.getCpf()).isPresent()) {
+			throw new IllegalArgumentException("Já existe uma pessoa física com o CPF informado.");
+		}
+		if (fisica.getEmail() != null && fisicaRepository.findByEmail(fisica.getEmail()).isPresent()) {
+			throw new IllegalArgumentException("Já existe uma pessoa física com o e-mail informado.");
+		}
+		if (fisica.getTelefone() != null && fisicaRepository.findByTelefone(fisica.getTelefone()).isPresent()) {
+			throw new IllegalArgumentException("Já existe uma pessoa física com o telefone informado.");
+		}
+		if (fisica.getNome() != null && fisicaRepository.findByNome(fisica.getNome()).isPresent()) {
+			throw new IllegalArgumentException("Já existe uma pessoa física com o nome informado.");
+		}
+	}
 }
-

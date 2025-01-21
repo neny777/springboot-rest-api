@@ -48,33 +48,35 @@ public class UsuarioController {
 	@GetMapping("/{id}")
 	public ResponseEntity<UsuarioDTO> buscarPorId(@PathVariable UUID id) {
 		UsuarioDTO usuarioDTO = usuarioService.findById(id); // Chama o serviço
-        return ResponseEntity.ok(usuarioDTO); // Retorna o DTO	
+		return ResponseEntity.ok(usuarioDTO); // Retorna o DTO
 	}
-	
+
 	@GetMapping("/email/{email}")
 	public ResponseEntity<UsuarioDTO> buscarPorEmail(@PathVariable String email) {
 		UsuarioDTO usuarioDTO = usuarioService.findByEmail(email); // Chama o serviço
-        return ResponseEntity.ok(usuarioDTO); // Retorna o DTO	
+		return ResponseEntity.ok(usuarioDTO); // Retorna o DTO
 	}
-	
+
 	// Endpoint para excluir usuário por ID
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> excluirPorId(@PathVariable UUID id) {
-	    usuarioService.deleteById(id);
-	    return ResponseEntity.noContent().build();
+		usuarioService.deleteById(id);
+		return ResponseEntity.noContent().build();
 	}
+
 	// Endpoint para validar o token
 	@GetMapping("/validate-token")
 	public ResponseEntity<?> validateToken() {
-	    try {
-	        // Verifica se o token é válido
-	        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		try {
+			// Verifica se o token é válido
+			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 
-	        // Retorna uma mensagem de sucesso com o usuário autenticado
-	        return ResponseEntity.ok(Map.of("message", "Token válido", "user", userDetails.getUsername()));
-	    } catch (Exception e) {
-	        // Retorna erro se o token for inválido
-	        return ResponseEntity.status(401).body(Map.of("error", "Token inválido"));
-	    }
+			// Retorna uma mensagem de sucesso com o usuário autenticado
+			return ResponseEntity.ok(Map.of("message", "Token válido", "user", userDetails.getUsername()));
+		} catch (Exception e) {
+			// Retorna erro se o token for inválido
+			return ResponseEntity.status(401).body(Map.of("error", "Token inválido"));
+		}
 	}
 }
