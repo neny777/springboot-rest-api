@@ -25,8 +25,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
-			DataIntegrityViolationException ex) {
+	public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 
 		String rootCauseMessage = ex.getRootCause() != null ? "Erro de integridade referencial ou campo duplicado."
 				: ex.getRootCause().getMessage();
@@ -36,7 +35,6 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-		// Concatena todas as mensagens de erro de validação
 		String errorMessage = ex.getConstraintViolations().stream()
 				.map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
 				.collect(Collectors.joining(", "));
@@ -44,8 +42,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-			MethodArgumentNotValidException ex) {
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		String errorMessage = ex.getBindingResult().getFieldErrors().stream()
 				.map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
 				.collect(Collectors.joining(", "));
@@ -68,16 +65,13 @@ public class GlobalExceptionHandler {
 		return buildErrorResponse("authentication_error", "Usuário e senha inválidos", HttpStatus.UNAUTHORIZED);
 	}
 
-	/*
-	 * // Método utilitário para criar uma resposta JSON private
-	 * ResponseEntity<Map<Str<ErrorResponse>rorResponse(String type, String
-	 * message, HttpStatus status) { Map<String, String> response = new HashMap<>();
-	 * response.put("errorType", type); response.put("message", message); return
-	 * ResponseEntity.status(status).body(response); }
-	 */
-	
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+		return buildErrorResponse("invalid_request", ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
 	private ResponseEntity<ErrorResponse> buildErrorResponse(String type, String message, HttpStatus status) {
-	    ErrorResponse response = new ErrorResponse(type, message, status.value());
-	    return ResponseEntity.status(status).body(response);
+		ErrorResponse response = new ErrorResponse(type, message, status.value());
+		return ResponseEntity.status(status).body(response);
 	}
 }

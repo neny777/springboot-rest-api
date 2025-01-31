@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import br.com.supermidia.converter.LowercaseConverter;
 import br.com.supermidia.converter.UppercaseConverter;
-import br.com.supermidia.pessoa.cliente.Cliente.Tipo;
+import br.com.supermidia.pessoa.cliente.Cliente.Categoria;
 import br.com.supermidia.pessoa.dominio.Fisica.Sexo;
 import br.com.supermidia.validation.CPF;
 import jakarta.persistence.Convert;
@@ -57,9 +57,9 @@ public class ClienteFisicoDTO extends ClienteDTO {
 	@Enumerated(EnumType.STRING)
 	@NotNull(message = "O sexo é obrigatório.")
 	private Sexo sexo;
-	private LocalDate dataNascimento;
-	@NotNull(message = "O tipo é obrigatório.")
-	private Tipo tipo;
+	private LocalDate nascimento;
+	@NotNull(message = "O categoria é obrigatório.")
+	private Categoria categoria;
 
 	public UUID getId() {
 		return id;
@@ -165,19 +165,19 @@ public class ClienteFisicoDTO extends ClienteDTO {
 		this.sexo = sexo;
 	}
 
-	public LocalDate getDataNascimento() {
-		return dataNascimento;
+	public LocalDate getNascimento() {
+		return nascimento;
 	}
 
-	public void setDataNascimento(LocalDate dataNascimento) {
-		this.dataNascimento = dataNascimento;
+	public void setNascimento(LocalDate nascimento) {
+		this.nascimento = nascimento;
 	}
 	
-	public Tipo getTipo() {
-		return tipo;
+	public Categoria getCategoria() {
+		return categoria;
 	}
 
-	public void setTipo(Tipo tipo) {
-		this.tipo = tipo;
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
 	}
 }

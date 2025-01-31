@@ -31,4 +31,9 @@ public class Juridica extends Pessoa {
 	public void setIe(String ie) {
 		this.ie = ie;
 	}
+
+	@Override
+	public String getTipo() {
+		return "JURÍDICA";		
+	}
 }

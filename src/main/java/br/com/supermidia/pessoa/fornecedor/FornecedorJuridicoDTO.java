@@ -1,10 +1,9 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.fornecedor;
 
 import java.util.UUID;
 
 import br.com.supermidia.converter.LowercaseConverter;
 import br.com.supermidia.converter.UppercaseConverter;
-import br.com.supermidia.pessoa.cliente.Cliente.Categoria;
 import br.com.supermidia.validation.CNPJ;
 import jakarta.persistence.Convert;
 import jakarta.validation.constraints.Email;
@@ -12,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class ClienteJuridicoDTO extends ClienteDTO {
+public class FornecedorJuridicoDTO extends FornecedorDTO {
 
 	private UUID id;
 	@NotNull(message = "O nome é obrigatório.")
@@ -49,8 +48,6 @@ public class ClienteJuridicoDTO extends ClienteDTO {
 	private String cnpj;
 	@Size(max = 18, message = "A inscrição estadual deve ter no máximo 18 caracteres.")
 	private String ie;
-	@NotNull(message = "O categoria é obrigatório.")
-	private Categoria categoria;
 
 	public UUID getId() {
 		return id;
@@ -146,13 +143,5 @@ public class ClienteJuridicoDTO extends ClienteDTO {
 
 	public void setIe(String ie) {
 		this.ie = ie;
-	}
-
-	public Categoria getCategoria() {
-		return categoria;
-	}
-
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
 	}	
 }

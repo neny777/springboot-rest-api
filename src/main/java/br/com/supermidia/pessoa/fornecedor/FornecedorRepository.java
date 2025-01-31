@@ -1,4 +1,4 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.fornecedor;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
+public interface FornecedorRepository extends JpaRepository<Fornecedor, UUID> {
 	boolean existsByPessoaId(UUID pessoaId);
 
 	boolean existsByPessoaNome(String nome);
@@ -23,27 +23,26 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
 	boolean existsByPessoaTelefoneAndIdNot(String telefone, UUID id);
 
-	Cliente getByPessoaNome(String nome);
+	Fornecedor getByPessoaNome(String nome);
 
-	Cliente getByPessoaEmail(String email);
+	Fornecedor getByPessoaEmail(String email);
 
-	Cliente getByPessoaTelefone(String telefone);
+	Fornecedor getByPessoaTelefone(String telefone);
 
 	@Query(value = """
-			    SELECT BIN_TO_UUID(c.pessoa_id) AS clienteId,
+			    SELECT BIN_TO_UUID(s.pessoa_id) AS fornecedorId,
 			           p.nome AS nome,
 			           p.email AS email,
 			           p.telefone AS telefone,
 			           p.municipio AS municipio,
-			           p.uf AS uf,
-			           c.categoria AS categoria
-			    FROM clientes c
-			    JOIN pessoas p ON c.pessoa_id = p.id
+			           p.uf AS uf
+			    FROM fornecedores s
+			    JOIN pessoas p ON s.pessoa_id = p.id
 			    LEFT JOIN pessoas_fisica f ON p.id = f.id
 			    LEFT JOIN pessoas_juridica j ON p.id = j.id
 			""", nativeQuery = true)
-	List<Object[]> findAllClientes();
+	List<Object[]> findAllfornecedores();
 
-	@Query("SELECT c FROM Cliente c WHERE c.pessoa.id = :pessoaId")
-	Optional<Cliente> findByPessoaId(@Param("pessoaId") UUID pessoaId);
+	@Query("SELECT s FROM Fornecedor s WHERE s.pessoa.id = :pessoaId")
+	Optional<Fornecedor> findByPessoaId(@Param("pessoaId") UUID pessoaId);
 }

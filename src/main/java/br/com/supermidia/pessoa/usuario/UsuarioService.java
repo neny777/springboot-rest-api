@@ -99,13 +99,10 @@ public class UsuarioService {
 			colaborador.setUsuario(null);
 		}
 
-		System.out.println("Excluindo permissões: " + usuario.getPermissoes());
-
 		// Excluir o usuário e as permissões automaticamente
 		usuarioRepository.delete(usuario);
 		usuarioRepository.flush();
 
-		System.out.println("Usuário excluído com sucesso.");
 	}
 
 	public UsuarioDTO findByEmail(String email) {

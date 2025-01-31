@@ -16,7 +16,10 @@ public class FisicaService {
 	}
 
 	private void validarAtributosUnicos(Fisica fisica) {
-
+		
+		if (fisica.getRg() != null && fisicaRepository.findByRg(fisica.getRg()).isPresent()) {
+			throw new IllegalArgumentException("Já existe uma pessoa física com o RG informado.");
+		}
 		if (fisica.getCpf() != null && fisicaRepository.findByCpf(fisica.getCpf()).isPresent()) {
 			throw new IllegalArgumentException("Já existe uma pessoa física com o CPF informado.");
 		}

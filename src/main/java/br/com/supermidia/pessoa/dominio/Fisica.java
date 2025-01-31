@@ -74,4 +74,9 @@ public class Fisica extends Pessoa {
 			return descricao;
 		}
 	}
+
+	@Override
+	public String getTipo() {
+		return "FÍSICA";
+	}
 }

@@ -1,18 +1,21 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.fornecedor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import br.com.supermidia.converter.LowercaseConverter;
 import br.com.supermidia.converter.UppercaseConverter;
-import br.com.supermidia.pessoa.cliente.Cliente.Categoria;
-import br.com.supermidia.validation.CNPJ;
+import br.com.supermidia.pessoa.dominio.Fisica.Sexo;
+import br.com.supermidia.validation.CPF;
 import jakarta.persistence.Convert;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class ClienteJuridicoDTO extends ClienteDTO {
+public class FornecedorFisicoDTO extends FornecedorDTO {
 
 	private UUID id;
 	@NotNull(message = "O nome é obrigatório.")
@@ -44,13 +47,16 @@ public class ClienteJuridicoDTO extends ClienteDTO {
 	@Size(max = 2, message = "A unidade federal deve ter no máximo 2 caracteres.")
 	@Convert(converter = UppercaseConverter.class)
 	private String uf;
-	@CNPJ(message = "CNPJ inválido.")
-	@Size(max = 18, message = "O cnpj deve ter no máximo 18 caracteres.")
-	private String cnpj;
-	@Size(max = 18, message = "A inscrição estadual deve ter no máximo 18 caracteres.")
-	private String ie;
-	@NotNull(message = "O categoria é obrigatório.")
-	private Categoria categoria;
+	@CPF(message = "CPF inválido")
+	@Size(max = 14, message = "O cpf deve ter no máximo 14 caracteres.")
+	private String cpf;
+	@Size(max = 14, message = "O rg deve ter no máximo 14 caracteres.")
+	@Convert(converter = UppercaseConverter.class)
+	private String rg;
+	@Enumerated(EnumType.STRING)
+	@NotNull(message = "O sexo é obrigatório.")
+	private Sexo sexo;
+	private LocalDate nascimento;
 
 	public UUID getId() {
 		return id;
@@ -132,27 +138,35 @@ public class ClienteJuridicoDTO extends ClienteDTO {
 		this.uf = uf;
 	}
 
-	public String getCnpj() {
-		return cnpj;
+	public String getCpf() {
+		return cpf;
 	}
 
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 
-	public String getIe() {
-		return ie;
+	public String getRg() {
+		return rg;
 	}
 
-	public void setIe(String ie) {
-		this.ie = ie;
+	public void setRg(String rg) {
+		this.rg = rg;
 	}
 
-	public Categoria getCategoria() {
-		return categoria;
+	public Sexo getSexo() {
+		return sexo;
 	}
 
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
-	}	
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+
+	public LocalDate getNascimento() {
+		return nascimento;
+	}
+
+	public void setNascimento(LocalDate nascimento) {
+		this.nascimento = nascimento;
+	}
 }

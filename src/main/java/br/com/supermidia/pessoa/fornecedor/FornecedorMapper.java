@@ -1,4 +1,4 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.fornecedor;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,11 +9,10 @@ import br.com.supermidia.pessoa.dominio.Juridica;
 import br.com.supermidia.pessoa.dominio.Pessoa;
 
 @Mapper(componentModel = "spring")
-public interface ClienteMapper {
+public interface FornecedorMapper {
 
-	// Cliente -> ClienteFisicoDTO
-	@Mapping(source = "cliente.id", target = "id")
-	@Mapping(source = "cliente.categoria", target = "categoria")
+	// Fornecedor -> FornecedorFisicoDTO
+	@Mapping(source = "fornecedor.id", target = "id")
 	@Mapping(source = "fisica.nome", target = "nome")
 	@Mapping(source = "fisica.email", target = "email")
 	@Mapping(source = "fisica.telefone", target = "telefone")
@@ -28,11 +27,10 @@ public interface ClienteMapper {
 	@Mapping(source = "fisica.sexo", target = "sexo")
 	@Mapping(source = "fisica.dataNascimento", target = "nascimento")
 	@Mapping(target = "tipo", expression = "java(getTipo(fisica))") // Mapeia o tipo de Pessoa
-	ClienteFisicoDTO toClienteFisicoDTO(Fisica fisica, Cliente cliente);
+	FornecedorFisicoDTO toFornecedorFisicoDTO(Fisica fisica, Fornecedor fornecedor);
 
-	// Cliente -> ClienteJuridicoDTO
-	@Mapping(source = "cliente.id", target = "id")
-	@Mapping(source = "cliente.categoria", target = "categoria")
+	// Fornecedor -> FornecedorJuridicoDTO
+	@Mapping(source = "fornecedor.id", target = "id")
 	@Mapping(source = "juridica.nome", target = "nome")
 	@Mapping(source = "juridica.email", target = "email")
 	@Mapping(source = "juridica.telefone", target = "telefone")
@@ -45,17 +43,15 @@ public interface ClienteMapper {
 	@Mapping(source = "juridica.cnpj", target = "cnpj")
 	@Mapping(source = "juridica.ie", target = "ie")
 	@Mapping(target = "tipo", expression = "java(getTipo(juridica))") // Mapeia o tipo de Pessoa
-	ClienteJuridicoDTO toClienteJuridicoDTO(Juridica juridica, Cliente cliente);
+	FornecedorJuridicoDTO toFornecedorJuridicoDTO(Juridica juridica, Fornecedor fornecedor);
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "categoria", source = "categoria")
-	@Mapping(target = "pessoa", expression = "java(updatePessoaFisica(clienteFisicoDTO, cliente.getPessoa()))")
-	void updateClienteFisicoFromDTO(ClienteFisicoDTO clienteFisicoDTO, @MappingTarget Cliente cliente);
+	@Mapping(target = "pessoa", expression = "java(updatePessoaFisica(fornecedorFisicoDTO, fornecedor.getPessoa()))")
+	void updateFornecedorFisicoFromDTO(FornecedorFisicoDTO fornecedorFisicoDTO, @MappingTarget Fornecedor fornecedor);
 	
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "categoria", source = "categoria")
-	@Mapping(target = "pessoa", expression = "java(updatePessoaJuridica(clienteJuridicoDTO, cliente.getPessoa()))")
-	void updateClienteJuridicoFromDTO(ClienteJuridicoDTO clienteJuridicoDTO, @MappingTarget Cliente cliente);
+	@Mapping(target = "pessoa", expression = "java(updatePessoaJuridica(fornecedorJuridicoDTO, fornecedor.getPessoa()))")
+	void updateFornecedorJuridicoFromDTO(FornecedorJuridicoDTO fornecedorJuridicoDTO, @MappingTarget Fornecedor fornecedor);
 
 	@Mapping(target = "cpf", source = "cpf")
 	@Mapping(target = "rg", source = "rg")
@@ -70,7 +66,7 @@ public interface ClienteMapper {
 	@Mapping(target = "bairro", source = "bairro")
 	@Mapping(target = "municipio", source = "municipio")
 	@Mapping(target = "uf", source = "uf")
-	void updateFisicaFromDTO(ClienteFisicoDTO clienteFisicoDTO, @MappingTarget Fisica fisica);
+	void updateFisicaFromDTO(FornecedorFisicoDTO fornecedorFisicoDTO, @MappingTarget Fisica fisica);
 	
 	@Mapping(target = "cnpj", source = "cnpj")
 	@Mapping(target = "ie", source = "ie")
@@ -83,17 +79,15 @@ public interface ClienteMapper {
 	@Mapping(target = "bairro", source = "bairro")
 	@Mapping(target = "municipio", source = "municipio")
 	@Mapping(target = "uf", source = "uf")
-	void updateJuridicaFromDTO(ClienteJuridicoDTO clienteJuridicoDTO, @MappingTarget Juridica juridica);
+	void updateJuridicaFromDTO(FornecedorJuridicoDTO fornecedorJuridicoDTO, @MappingTarget Juridica juridica);
 
 	@Mapping(target = "id", source = "id")
-	@Mapping(target = "categoria", source = "categoria")
-	@Mapping(target = "pessoa", expression = "java(toFisica(clienteFisicoDTO))")
-	Cliente toClienteFisico(ClienteFisicoDTO clienteFisicoDTO);
+	@Mapping(target = "pessoa", expression = "java(toFisica(fornecedorFisicoDTO))")
+	Fornecedor toFornecedorFisico(FornecedorFisicoDTO fornecedorFisicoDTO);
 	
 	@Mapping(target = "id", source = "id")
-	@Mapping(target = "categoria", source = "categoria")
-	@Mapping(target = "pessoa", expression = "java(toJuridica(clienteJuridicoDTO))")
-	Cliente toClienteJuridico(ClienteJuridicoDTO clienteJuridicoDTO);
+	@Mapping(target = "pessoa", expression = "java(toJuridica(fornecedorJuridicoDTO))")
+	Fornecedor toFornecedorJuridico(FornecedorJuridicoDTO fornecedorJuridicoDTO);
 
 	@Mapping(target = "id", ignore = true) // ID será gerado automaticamente
 	@Mapping(target = "cpf", source = "cpf")
@@ -109,7 +103,7 @@ public interface ClienteMapper {
 	@Mapping(target = "bairro", source = "bairro")
 	@Mapping(target = "municipio", source = "municipio")
 	@Mapping(target = "uf", source = "uf")
-	Fisica toFisica(ClienteFisicoDTO clienteFisicoDTO);
+	Fisica toFisica(FornecedorFisicoDTO fornecedorFisicoDTO);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "cnpj", source = "cnpj")
@@ -123,20 +117,20 @@ public interface ClienteMapper {
 	@Mapping(target = "bairro", source = "bairro")
 	@Mapping(target = "municipio", source = "municipio")
 	@Mapping(target = "uf", source = "uf")
-	Juridica toJuridica(ClienteJuridicoDTO clienteJuridicoDTO);
+	Juridica toJuridica(FornecedorJuridicoDTO fornecedorJuridicoDTO);
 
-	default Pessoa updatePessoaFisica(ClienteFisicoDTO clienteFisicoDTO, Pessoa pessoa) {
+	default Pessoa updatePessoaFisica(FornecedorFisicoDTO fornecedorFisicoDTO, Pessoa pessoa) {
 		if (pessoa instanceof Fisica fisica) {
-			updateFisicaFromDTO(clienteFisicoDTO, fisica);
+			updateFisicaFromDTO(fornecedorFisicoDTO, fisica);
 		} else {
 			throw new IllegalStateException("A pessoa associada não é do tipo Fisica.");
 		}
 		return pessoa;
 	}
 	
-	default Pessoa updatePessoaJuridica(ClienteJuridicoDTO clienteJuridicoDTO, Pessoa pessoa) {
+	default Pessoa updatePessoaJuridica(FornecedorJuridicoDTO fornecedorJuridicoDTO, Pessoa pessoa) {
 		if (pessoa instanceof Juridica juridica) {
-			updateJuridicaFromDTO(clienteJuridicoDTO, juridica);
+			updateJuridicaFromDTO(fornecedorJuridicoDTO, juridica);
 		} else {
 			throw new IllegalStateException("A pessoa associada não é do tipo Fisica.");
 		}

@@ -1,8 +1,8 @@
-package br.com.supermidia.pessoa.cliente;
+package br.com.supermidia.pessoa.fornecedor;
 
 import java.util.UUID;
 
-public class ClienteDTO {
+public class FornecedorDTO {
 	private UUID id;
 	private String nome;
 	private String email;

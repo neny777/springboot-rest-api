@@ -19,6 +19,10 @@ public class JuridicaService {
     }
 
     private void validarAtributosUnicos(Juridica juridica) {
+    	// Verificar IE
+        if (juridica.getIe() != null && juridicaRepository.findByIe(juridica.getIe()).isPresent()) {
+            throw new IllegalArgumentException("Já existe uma pessoa jurídica com a Inscrição Estadual informada.");
+        }
         // Verificar CNPJ
         if (juridica.getCnpj() != null && juridicaRepository.findByCnpj(juridica.getCnpj()).isPresent()) {
             throw new IllegalArgumentException("Já existe uma pessoa jurídica com o CNPJ informado.");

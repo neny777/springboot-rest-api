@@ -156,4 +156,6 @@ public abstract class Pessoa implements Serializable {
 		Pessoa other = (Pessoa) obj;
 		return Objects.equals(id, other.id);
 	}
+	
+	 public abstract String getTipo();
 }
