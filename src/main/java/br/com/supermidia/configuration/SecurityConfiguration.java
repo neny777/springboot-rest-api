@@ -40,10 +40,11 @@ public class SecurityConfiguration {
 				.requestMatchers("/api/health").permitAll().requestMatchers("/api/authentication/**").permitAll()
 				.requestMatchers("/api/usuarios/validate-token").permitAll().requestMatchers("/api/password/**")
 				.permitAll().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permitir OPTIONS
-				.requestMatchers("/api/pessoas/**").hasAnyRole("clientes", "colaboradores", "fornecedores")
+				.requestMatchers("/api/pessoas/**").hasAnyRole("clientes", "colaboradores", "fornecedores", "parceiros")
 				.requestMatchers("/api/colaboradores/**").hasRole("colaboradores").requestMatchers("/api/usuarios/**")
 				.hasRole("usuarios").requestMatchers("/api/clientes/**").hasRole("clientes")
-				.requestMatchers("/api/fornecedores/**").hasRole("fornecedores"))
+				.requestMatchers("/api/fornecedores/**").hasRole("fornecedores").requestMatchers("/api/parceiros/**")
+				.hasRole("parceiros"))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

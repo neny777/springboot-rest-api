@@ -14,6 +14,7 @@ import br.com.supermidia.pessoa.dominio.Fisica;
 import br.com.supermidia.pessoa.dominio.FisicaRepository;
 import br.com.supermidia.pessoa.dominio.Juridica;
 import br.com.supermidia.pessoa.dominio.JuridicaRepository;
+import br.com.supermidia.pessoa.dominio.Pessoa;
 import br.com.supermidia.pessoa.dominio.PessoaRepository;
 import br.com.supermidia.pessoa.dominio.PessoaService;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,29 +22,22 @@ import jakarta.validation.Valid;
 
 @Service
 public class ClienteService {
-
 	@Autowired
 	private PessoaService pessoaService;
-
 	@Autowired
 	private ClienteRepository clienteRepository;
-
 	@Autowired
 	private PessoaRepository pessoaRepository;
-
 	@Autowired
 	private FisicaRepository fisicaRepository;
-
 	@Autowired
 	private JuridicaRepository juridicaRepository;
-
 	@Autowired
 	private ClienteMapper clienteMapper;
 
 	@Transactional
 	public Cliente saveFisico(ClienteFisicoDTO dto) {
 		Cliente cliente = clienteMapper.toClienteFisico(dto);
-
 		if (dto.getId() != null) {
 			Fisica fisica = fisicaRepository.findById(dto.getId()).get();
 			cliente.setPessoa(fisica);
@@ -53,14 +47,12 @@ public class ClienteService {
 				cliente.setId(null);
 			}
 		}
-
 		return clienteRepository.save(cliente);
 	}
-	
+
 	@Transactional
 	public Cliente saveJuridico(ClienteJuridicoDTO dto) {
 		Cliente cliente = clienteMapper.toClienteJuridico(dto);
-
 		if (dto.getId() != null) {
 			Juridica juridica = juridicaRepository.findById(dto.getId()).get();
 			cliente.setPessoa(juridica);
@@ -70,7 +62,6 @@ public class ClienteService {
 				cliente.setId(null);
 			}
 		}
-
 		return clienteRepository.save(cliente);
 	}
 
@@ -79,10 +70,8 @@ public class ClienteService {
 		// Busca o cliente existente
 		Cliente cliente = clienteRepository.findByPessoaId(clienteFisicoDTO.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
-
 		// Atualiza os dados do cliente usando o mapper
 		clienteMapper.updateClienteFisicoFromDTO(clienteFisicoDTO, cliente);
-
 		// Salva o cliente atualizado
 		clienteRepository.save(cliente);
 	}
@@ -92,77 +81,51 @@ public class ClienteService {
 		// Busca o cliente existente
 		Cliente cliente = clienteRepository.findByPessoaId(clienteJuridicoDTO.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
-
 		// Atualiza os dados do cliente usando o mapper
 		clienteMapper.updateClienteJuridicoFromDTO(clienteJuridicoDTO, cliente);
-
 		// Salva o cliente atualizado
 		clienteRepository.save(cliente);
 	}
 
 	@Transactional
 	public void delete(UUID clienteId) {
-		System.out.println("Service deletar por id");
+
 		Cliente cliente = clienteRepository.findById(clienteId)
 				.orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
-
-		System.out.println("Cliente localizado");
 		Fisica fisica;
 		if ((cliente.getPessoa()).getClass() == Fisica.class) {
-			System.out.println("Cliente físico");
 			fisica = fisicaRepository.findById(clienteId)
 					.orElseThrow(() -> new IllegalArgumentException("Pessoa física não encontrada."));
-
 			if (pessoaService.clienteTemOutroPapel(fisica.getId())) {
-				System.out.println("Cliente jurídico tem outro papel");
 				clienteRepository.deleteById(clienteId);
-				System.out.println("Desassociando de cliente");
 				return;
-
 			} else {
-				System.out.println("Cliente jurídico não tem outro papel");
 				clienteRepository.deleteById(clienteId);
-				System.out.println("Deletando cliente");
 				fisicaRepository.deleteById(clienteId);
-				System.out.println("Deletando pessoa física");
 				pessoaRepository.deleteById(clienteId);
-				System.out.println("Deletando pessoa");
 				return;
 			}
 		}
-		
 		Juridica juridica;
 		if ((cliente.getPessoa()).getClass() == Juridica.class) {
-			System.out.println("Cliente jurídico");
-
 			juridica = juridicaRepository.findById(clienteId)
 					.orElseThrow(() -> new IllegalArgumentException("Pessoa jurídica não encontrada."));
-			System.out.println(juridica.getNome());
-
 			if (pessoaService.clienteTemOutroPapel(juridica.getId())) {
-				System.out.println("Cliente jurídico tem outro papel");
 				clienteRepository.deleteById(clienteId);
-				System.out.println("Desassociando de cliente");
-				return;
 
+				return;
 			} else {
-				System.out.println("Cliente jurídico não tem outro papel");
 				clienteRepository.deleteById(clienteId);
-				System.out.println("Deletando cliente");
 				juridicaRepository.deleteById(clienteId);
-				System.out.println("Deletando pessoa jurídica");
 				pessoaRepository.deleteById(clienteId);
-				System.out.println("Deletando pessoa");
 				return;
 			}
 		}
 	}
 
 	public List<ClienteDTO> listarClientesDTO() {
-
 		List<Cliente> clientes = clienteRepository.findAll();
 		List<ClienteDTO> clientesDTO = new ArrayList<>();
-
 		for (Cliente cliente : clientes) {
 			ClienteDTO dto = new ClienteDTO();
 			dto.setId(cliente.getId());
@@ -174,7 +137,6 @@ public class ClienteService {
 			dto.setTipo(cliente.getPessoa().getTipo());
 			clientesDTO.add(dto);
 		}
-
 		return clientesDTO;
 	}
 
@@ -188,7 +150,6 @@ public class ClienteService {
 					.orElseThrow(() -> new IllegalArgumentException("Cliente associado não encontrado."));
 			return clienteMapper.toClienteFisicoDTO(fisica, cliente);
 		}
-
 		// Buscar na tabela de pessoas jurídicas
 		Optional<Juridica> juridicaOptional = juridicaRepository.findById(id);
 		if (juridicaOptional.isPresent()) {
@@ -197,7 +158,6 @@ public class ClienteService {
 					.orElseThrow(() -> new IllegalArgumentException("Cliente associado não encontrado."));
 			return clienteMapper.toClienteJuridicoDTO(juridica, cliente);
 		}
-
 		// Se não encontrado em nenhum dos dois
 		throw new IllegalArgumentException("Cliente não encontrado.");
 	}
@@ -206,12 +166,10 @@ public class ClienteService {
 		// Buscar o cliente pelo ID
 		Cliente cliente = clienteRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com o ID: " + id));
-
 		// Garantir que a pessoa associada é do tipo Fisica
 		if (!(cliente.getPessoa() instanceof Fisica fisica)) {
 			throw new IllegalStateException("A pessoa associada ao cliente não é do tipo Fisica.");
 		}
-
 		// Mapear o cliente e a entidade Fisica para ClienteFisicoDTO
 		return clienteMapper.toClienteFisicoDTO(fisica, cliente);
 	}
@@ -220,19 +178,16 @@ public class ClienteService {
 		// Buscar o cliente pelo ID
 		Cliente cliente = clienteRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com o ID: " + id));
-
 		// Garantir que a pessoa associada é do tipo Fisica
 		if (!(cliente.getPessoa() instanceof Juridica juridica)) {
 			throw new IllegalStateException("A pessoa associada ao cliente não é do tipo Jurídica.");
 		}
-
 		// Mapear o cliente e a entidade Fisica para ClienteFisicoDTO
 		return clienteMapper.toClienteJuridicoDTO(juridica, cliente);
 	}
 
 	public List<String> validarAtributosFisicoUnicos(ClienteFisicoDTO clienteFisicoDTO) {
 		List<String> erros = new ArrayList<>();
-
 		if (clienteFisicoDTO.getId() == null) {
 			validarUnicidade(clienteFisicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
 					erros);
@@ -243,11 +198,9 @@ public class ClienteService {
 			validarUnicidade(clienteFisicoDTO.getRg(), null, "rg", valor -> fisicaRepository.existsByRg(valor), erros);
 			validarUnicidade(clienteFisicoDTO.getCpf(), null, "cpf", valor -> fisicaRepository.existsByCpf(valor),
 					erros);
-
 			return erros;
 		} else {
 			UUID id = clienteFisicoDTO.getId();
-
 			validarUnicidade(clienteFisicoDTO.getNome(), id, "nome",
 					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
 			validarUnicidade(clienteFisicoDTO.getEmail(), id, "email",
@@ -258,14 +211,12 @@ public class ClienteService {
 					valor -> fisicaRepository.existsByRgAndIdNot(valor, id), erros);
 			validarUnicidade(clienteFisicoDTO.getCpf(), id, "cpf",
 					valor -> fisicaRepository.existsByCpfAndIdNot(valor, id), erros);
-
 			return erros;
 		}
 	}
 
 	public List<String> validarAtributosJuridicoUnicos(@Valid ClienteJuridicoDTO clienteJuridicoDTO) {
 		List<String> erros = new ArrayList<>();
-
 		if (clienteJuridicoDTO.getId() == null) {
 			validarUnicidade(clienteJuridicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
 					erros);
@@ -277,11 +228,9 @@ public class ClienteService {
 					erros);
 			validarUnicidade(clienteJuridicoDTO.getCnpj(), null, "cnpj",
 					valor -> juridicaRepository.existsByCnpj(valor), erros);
-
 			return erros;
 		} else {
 			UUID id = clienteJuridicoDTO.getId();
-
 			validarUnicidade(clienteJuridicoDTO.getNome(), id, "nome",
 					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
 			validarUnicidade(clienteJuridicoDTO.getEmail(), id, "email",
@@ -292,7 +241,6 @@ public class ClienteService {
 					valor -> juridicaRepository.existsByIeAndIdNot(valor, id), erros);
 			validarUnicidade(clienteJuridicoDTO.getCnpj(), id, "cpf",
 					valor -> juridicaRepository.existsByCnpjAndIdNot(valor, id), erros);
-
 			return erros;
 		}
 	}
@@ -307,7 +255,6 @@ public class ClienteService {
 		// Adiciona mensagem de erro à lista, em vez de lançar exceção
 		if (duplicado) {
 			erros.add(campo.toUpperCase() + " " + valor + " já está cadastrado");
-
 		}
 	}
 
@@ -316,40 +263,32 @@ public class ClienteService {
 	}
 
 	public ClienteFisicoDTO buscarPessoaFisica(UUID id) {
-		ClienteFisicoDTO clienteFisicoDTO = new ClienteFisicoDTO();
-
-		Fisica fisica = fisicaRepository.findById(id).orElse(null);
-
-		if (fisica == null) {
-			throw new IllegalStateException("Pessoa física não encontrada");
+		// Buscar a pessoa independente do tipo
+		Pessoa pessoa = pessoaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
+		// Verificar se a pessoa é do tipo correto
+		if (!"FÍSICA".equals(pessoa.getTipo())) {
+			throw new IllegalStateException("Pessoa selecionada não é Física.");
 		}
-
+		Fisica fisica = fisicaRepository.findById(id).get();
 		Cliente cliente = new Cliente();
-
-		cliente.setPessoa(fisica);
 		cliente.setId(id);
-
-		clienteFisicoDTO = clienteMapper.toClienteFisicoDTO(fisica, cliente);
-
-		return clienteFisicoDTO;
+		// Mapear para ClienteFisicoDTO
+		return clienteMapper.toClienteFisicoDTO(fisica, cliente);
 	}
-	
+
 	public ClienteJuridicoDTO buscarPessoaJuridica(UUID id) {
-		ClienteJuridicoDTO clienteJuridicoDTO = new ClienteJuridicoDTO();
-
-		Juridica juridica = juridicaRepository.findById(id).orElse(null);
-
-		if (juridica == null) {
-			throw new IllegalStateException("Pessoa física não encontrada");
+		// Buscar a pessoa independente do tipo
+		Pessoa pessoa = pessoaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
+		// Verificar se a pessoa é do tipo correto
+		if (!"JURÍDICA".equals(pessoa.getTipo())) {
+			throw new IllegalStateException("Pessoa selecionada não é  Jurídica.");
 		}
-
+		Juridica juridica = juridicaRepository.findById(id).get();
 		Cliente cliente = new Cliente();
-
-		cliente.setPessoa(juridica);
 		cliente.setId(id);
-
-		clienteJuridicoDTO = clienteMapper.toClienteJuridicoDTO(juridica, cliente);
-
-		return clienteJuridicoDTO;
+		// Mapear para ClienteJuridicoDTO
+		return clienteMapper.toClienteJuridicoDTO(juridica, cliente);
 	}
 }

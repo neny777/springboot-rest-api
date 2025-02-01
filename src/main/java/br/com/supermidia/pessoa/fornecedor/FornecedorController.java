@@ -97,12 +97,10 @@ public class FornecedorController {
 	// Atualizar fornecedor jurídico
 	@PutMapping("/juridico/{id}")
 	public ResponseEntity<?> editarFornecedorJuridico(@PathVariable UUID id, @RequestBody @Valid FornecedorJuridicoDTO dto) {
-		System.out.println("Put editar fornecedor jurídico");
-		System.out.println("id do fornecedor: " + dto.getId());
+
 		// Realiza a validação
 		List<String> erros = fornecedorService.validarAtributosJuridicoUnicos(dto);
 
-		System.out.println("Dados validados com sucesso");
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
@@ -155,11 +153,6 @@ public class FornecedorController {
 
 	@PostMapping("/juridico/validar")
 	public ResponseEntity<?> validarFornecedorJuridico(@RequestBody @Valid FornecedorJuridicoDTO dto) {
-		System.out.println("função validar fornecedor jurídico");
-		System.out.println(dto.getNome());
-		System.out.println(dto.getEmail());
-		System.out.println(dto.getTelefone());
-		System.out.println(dto.getId());
 		// Realiza a validação
 		List<String> erros = fornecedorService.validarAtributosJuridicoUnicos(dto);
 

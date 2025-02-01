@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import br.com.supermidia.pessoa.cliente.ClienteRepository;
 import br.com.supermidia.pessoa.colaborador.ColaboradorRepository;
 import br.com.supermidia.pessoa.fornecedor.FornecedorRepository;
+import br.com.supermidia.pessoa.parceiro.ParceiroRepository;
 
 @Service
 public class PessoaService {
@@ -24,6 +25,9 @@ public class PessoaService {
     
     @Autowired
     private FornecedorRepository fornecedorRepository;
+    
+    @Autowired
+    private ParceiroRepository parceiroRepository;
 
     @Autowired
     private ColaboradorRepository colaboradorRepository;
@@ -40,15 +44,19 @@ public class PessoaService {
 	}
 	
     public boolean clienteTemOutroPapel(UUID id) {
-        return isColaborador(id) || isFornecedor(id);
+        return isColaborador(id) || isFornecedor(id) || isParceiro(id);
     }
     
 	public boolean fornecedorTemOutroPapel(UUID id) {		
-		return isCliente(id) || isColaborador(id);
+		return isCliente(id) || isColaborador(id) || isParceiro(id);
+	}
+	
+	public boolean parceiroTemOutroPapel(UUID id) {		
+		return isCliente(id) || isColaborador(id) || isFornecedor(id);
 	}
     
     public boolean colaboradorTemOutroPapel(UUID id) {
-        return isCliente(id) || isFornecedor(id);
+        return isCliente(id) || isFornecedor(id) || isParceiro(id);
     }
 
     public boolean isCliente(UUID id) {
@@ -57,6 +65,10 @@ public class PessoaService {
     
     public boolean isFornecedor(UUID id) {
         return fornecedorRepository.existsByPessoaId(id);
+    }
+    
+    public boolean isParceiro(UUID id) {
+        return parceiroRepository.existsByPessoaId(id);
     }
 
     public boolean isColaborador(UUID id) {
