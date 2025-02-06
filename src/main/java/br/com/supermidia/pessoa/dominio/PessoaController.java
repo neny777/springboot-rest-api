@@ -20,8 +20,8 @@ public class PessoaController {
     }
 
     @GetMapping("/nome")
-    public ResponseEntity<List<Map<String, Object>>> buscarPessoasPorNome(@RequestParam String nome) {    	
-        List<Map<String, Object>> pessoas = pessoaService.buscarPessoasPorNome(nome);
+    public ResponseEntity<List<Map<String, Object>>> findPessoasByNome(@RequestParam String nome) {    	
+        List<Map<String, Object>> pessoas = pessoaService.findPessoasByNome(nome);
         return ResponseEntity.ok(pessoas);
     }
 }

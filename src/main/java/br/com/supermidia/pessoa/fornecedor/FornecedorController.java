@@ -29,36 +29,36 @@ public class FornecedorController {
 
 	// Buscar pessoa física
 	@GetMapping("/pessoa/fisica/{id}")
-	public ResponseEntity<FornecedorFisicoDTO> buscarPessoaFisica(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorFisicoDTO> findPessoaFisica(@PathVariable UUID id) {
 
-		FornecedorFisicoDTO fornecedorFisicoDTO = fornecedorService.buscarPessoaFisica(id);
+		FornecedorFisicoDTO fornecedorFisicoDTO = fornecedorService.findPessoaFisicaById(id);
 
 		return ResponseEntity.ok(fornecedorFisicoDTO);
 	}
 
 	// Buscar pessoa jurídica
 	@GetMapping("/pessoa/juridica/{id}")
-	public ResponseEntity<FornecedorJuridicoDTO> buscarPessoaJuridica(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorJuridicoDTO> findPessoaJuridica(@PathVariable UUID id) {
 
-		FornecedorJuridicoDTO fornecedorJuridicoDTO = fornecedorService.buscarPessoaJuridica(id);
+		FornecedorJuridicoDTO fornecedorJuridicoDTO = fornecedorService.findPessoaJuridicaById(id);
 
 		return ResponseEntity.ok(fornecedorJuridicoDTO);
 	}
 
 	// Buscar fornecedor físico
 	@GetMapping("/fisico/{id}")
-	public ResponseEntity<FornecedorFisicoDTO> buscarFornecedorFisico(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorFisicoDTO> findFornecedorFisico(@PathVariable UUID id) {
 
-		FornecedorFisicoDTO fornecedorFisicoDTO = fornecedorService.buscarFornecedorFisico(id);
+		FornecedorFisicoDTO fornecedorFisicoDTO = fornecedorService.findFisicoById(id);
 
 		return ResponseEntity.ok(fornecedorFisicoDTO);
 	}
 
 	// Buscar fornecedor jurídico
 	@GetMapping("/juridico/{id}")
-	public ResponseEntity<FornecedorJuridicoDTO> buscarFornecedorJuridico(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorJuridicoDTO> findFornecedorJuridico(@PathVariable UUID id) {
 
-		FornecedorJuridicoDTO fornecedorJuridicoDTO = fornecedorService.buscarFornecedorJuridico(id);
+		FornecedorJuridicoDTO fornecedorJuridicoDTO = fornecedorService.findJuridicoById(id);
 
 		return ResponseEntity.ok(fornecedorJuridicoDTO);
 	}
@@ -84,13 +84,13 @@ public class FornecedorController {
 	public ResponseEntity<?> editarFornecedorFisico(@PathVariable UUID id, @RequestBody @Valid FornecedorFisicoDTO dto) {
 
 		// Realiza a validação
-		List<String> erros = fornecedorService.validarAtributosFisicoUnicos(dto);
+		List<String> erros = fornecedorService.fisicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
-		fornecedorService.editarFornecedorFisico(id, dto);
+		fornecedorService.updateFisico(id, dto);
 		return ResponseEntity.ok("Fornecedor atualizado com sucesso!");
 	}
 
@@ -99,13 +99,13 @@ public class FornecedorController {
 	public ResponseEntity<?> editarFornecedorJuridico(@PathVariable UUID id, @RequestBody @Valid FornecedorJuridicoDTO dto) {
 
 		// Realiza a validação
-		List<String> erros = fornecedorService.validarAtributosJuridicoUnicos(dto);
+		List<String> erros = fornecedorService.jurididicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
-		fornecedorService.editarFornecedorJuridico(id, dto);
+		fornecedorService.updateJuridico(id, dto);
 		return ResponseEntity.ok("Fornecedor atualizado com sucesso!");
 	}
 
@@ -113,7 +113,7 @@ public class FornecedorController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> excluirFornecedor(@PathVariable UUID id) {
 		System.out.println("endpoint delete api fornecedores id");
-		fornecedorService.delete(id);
+		fornecedorService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -121,27 +121,27 @@ public class FornecedorController {
 	@GetMapping
 	public ResponseEntity<List<FornecedorDTO>> listarFornecedores() {
 
-		List<FornecedorDTO> fornecedores = fornecedorService.listarFornecedoresDTO();
+		List<FornecedorDTO> fornecedores = fornecedorService.findAll();
 		return ResponseEntity.ok(fornecedores);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<FornecedorDTO> buscarPorId(@PathVariable UUID id) {
-		FornecedorDTO fornecedorDTO = fornecedorService.buscarPorId(id);
+	public ResponseEntity<FornecedorDTO> findById(@PathVariable UUID id) {
+		FornecedorDTO fornecedorDTO = fornecedorService.findById(id);
 		return ResponseEntity.ok(fornecedorDTO);
 	}
 
 	@PostMapping("/fisico/validar")
 	public ResponseEntity<?> validarFornecedorFisico(@RequestBody @Valid FornecedorFisicoDTO dto) {
 		// Realiza a validação
-		List<String> erros = fornecedorService.validarAtributosFisicoUnicos(dto);
+		List<String> erros = fornecedorService.fisicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
 		if (dto.getId() != null) {
-			boolean cadastrado = fornecedorService.existeFornecedorPorId(dto.getId());
+			boolean cadastrado = fornecedorService.existsById(dto.getId());
 			if (cadastrado) {
 				erros.add("Fornecedor já está cadastrado");
 				return ResponseEntity.badRequest().body(Map.of("errors", erros));
@@ -154,14 +154,14 @@ public class FornecedorController {
 	@PostMapping("/juridico/validar")
 	public ResponseEntity<?> validarFornecedorJuridico(@RequestBody @Valid FornecedorJuridicoDTO dto) {
 		// Realiza a validação
-		List<String> erros = fornecedorService.validarAtributosJuridicoUnicos(dto);
+		List<String> erros = fornecedorService.jurididicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
 		if (dto.getId() != null) {
-			boolean cadastrado = fornecedorService.existeFornecedorPorId(dto.getId());
+			boolean cadastrado = fornecedorService.existsById(dto.getId());
 			if (cadastrado) {
 				erros.add("Fornecedor já está cadastrado");
 				return ResponseEntity.badRequest().body(Map.of("errors", erros));

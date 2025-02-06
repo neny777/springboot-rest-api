@@ -32,7 +32,7 @@ public class PessoaService {
     @Autowired
     private ColaboradorRepository colaboradorRepository;
 
-	public List<Map<String, Object>> buscarPessoasPorNome(String nome) {
+	public List<Map<String, Object>> findPessoasByNome(String nome) {
 		List<Pessoa> pessoas = pessoaRepository.findByNomeContainingIgnoreCase(nome);
 
 		return pessoas.stream().map(pessoa -> {

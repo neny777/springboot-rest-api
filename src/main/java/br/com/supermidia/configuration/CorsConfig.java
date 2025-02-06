@@ -15,6 +15,7 @@ public class CorsConfig {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 
 		// Permitir o domínio do frontend
+		//corsConfiguration.addAllowedOrigin("http://45.189.66.132:3000");
 		corsConfiguration.addAllowedOrigin("http://192.168.3.18:3000");
 
 		// Permitir todos os métodos HTTP (GET, POST, etc.)

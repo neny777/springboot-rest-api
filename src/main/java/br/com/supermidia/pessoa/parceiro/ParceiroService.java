@@ -66,7 +66,7 @@ public class ParceiroService {
 	}
 
 	@Transactional
-	public void editarParceiroFisico(UUID id, ParceiroFisicoDTO parceiroFisicoDTO) {
+	public void updateFisico(UUID id, ParceiroFisicoDTO parceiroFisicoDTO) {
 		// Busca o parceiro existente
 		Parceiro parceiro = parceiroRepository.findByPessoaId(parceiroFisicoDTO.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Parceiro não encontrado."));
@@ -77,7 +77,7 @@ public class ParceiroService {
 	}
 
 	@Transactional
-	public void editarParceiroJuridico(UUID id, ParceiroJuridicoDTO parceiroJuridicoDTO) {
+	public void updateJuridico(UUID id, ParceiroJuridicoDTO parceiroJuridicoDTO) {
 		// Busca o parceiro existente
 		Parceiro parceiro = parceiroRepository.findByPessoaId(parceiroJuridicoDTO.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Parceiro não encontrado."));
@@ -88,8 +88,7 @@ public class ParceiroService {
 	}
 
 	@Transactional
-	public void delete(UUID parceiroId) {
-
+	public void deleteById(UUID parceiroId) {
 		Parceiro parceiro = parceiroRepository.findById(parceiroId)
 				.orElseThrow(() -> new IllegalArgumentException("Parceiro não encontrado."));
 		Fisica fisica;
@@ -123,7 +122,7 @@ public class ParceiroService {
 		}
 	}
 
-	public List<ParceiroDTO> listarParceirosDTO() {
+	public List<ParceiroDTO> findAll() {
 		List<Parceiro> parceiros = parceiroRepository.findAll();
 		List<ParceiroDTO> parceirosDTO = new ArrayList<>();
 		for (Parceiro parceiro : parceiros) {
@@ -141,7 +140,7 @@ public class ParceiroService {
 	}
 
 	@Transactional(readOnly = true)
-	public ParceiroDTO buscarPorId(UUID id) {
+	public ParceiroDTO findById(UUID id) {
 		// Buscar na tabela de pessoas físicas
 		Optional<Fisica> fisicaOptional = fisicaRepository.findById(id);
 		if (fisicaOptional.isPresent()) {
@@ -162,7 +161,7 @@ public class ParceiroService {
 		throw new IllegalArgumentException("Parceiro não encontrado.");
 	}
 
-	public ParceiroFisicoDTO buscarParceiroFisico(UUID id) {
+	public ParceiroFisicoDTO findFisicoById(UUID id) {
 		// Buscar o parceiro pelo ID
 		Parceiro parceiro = parceiroRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Parceiro não encontrado com o ID: " + id));
@@ -174,7 +173,7 @@ public class ParceiroService {
 		return parceiroMapper.toParceiroFisicoDTO(fisica, parceiro);
 	}
 
-	public ParceiroJuridicoDTO buscarParceiroJuridico(UUID id) {
+	public ParceiroJuridicoDTO findJuridicoById(UUID id) {
 		// Buscar o parceiro pelo ID
 		Parceiro parceiro = parceiroRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Parceiro não encontrado com o ID: " + id));
@@ -186,66 +185,66 @@ public class ParceiroService {
 		return parceiroMapper.toParceiroJuridicoDTO(juridica, parceiro);
 	}
 
-	public List<String> validarAtributosFisicoUnicos(ParceiroFisicoDTO parceiroFisicoDTO) {
+	public List<String> fisicoUniqueAttributeValidation(ParceiroFisicoDTO parceiroFisicoDTO) {
 		List<String> erros = new ArrayList<>();
 		if (parceiroFisicoDTO.getId() == null) {
-			validarUnicidade(parceiroFisicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
+			uniquenessValidation(parceiroFisicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
 					erros);
-			validarUnicidade(parceiroFisicoDTO.getEmail(), null, "email", valor -> pessoaRepository.existsByEmail(valor),
+			uniquenessValidation(parceiroFisicoDTO.getEmail(), null, "email", valor -> pessoaRepository.existsByEmail(valor),
 					erros);
-			validarUnicidade(parceiroFisicoDTO.getTelefone(), null, "telefone",
+			uniquenessValidation(parceiroFisicoDTO.getTelefone(), null, "telefone",
 					valor -> pessoaRepository.existsByTelefone(valor), erros);
-			validarUnicidade(parceiroFisicoDTO.getRg(), null, "rg", valor -> fisicaRepository.existsByRg(valor), erros);
-			validarUnicidade(parceiroFisicoDTO.getCpf(), null, "cpf", valor -> fisicaRepository.existsByCpf(valor),
+			uniquenessValidation(parceiroFisicoDTO.getRg(), null, "rg", valor -> fisicaRepository.existsByRg(valor), erros);
+			uniquenessValidation(parceiroFisicoDTO.getCpf(), null, "cpf", valor -> fisicaRepository.existsByCpf(valor),
 					erros);
 			return erros;
 		} else {
 			UUID id = parceiroFisicoDTO.getId();
-			validarUnicidade(parceiroFisicoDTO.getNome(), id, "nome",
+			uniquenessValidation(parceiroFisicoDTO.getNome(), id, "nome",
 					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroFisicoDTO.getEmail(), id, "email",
+			uniquenessValidation(parceiroFisicoDTO.getEmail(), id, "email",
 					valor -> pessoaRepository.existsByEmailAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroFisicoDTO.getTelefone(), id, "telefone",
+			uniquenessValidation(parceiroFisicoDTO.getTelefone(), id, "telefone",
 					valor -> pessoaRepository.existsByTelefoneAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroFisicoDTO.getRg(), id, "rg",
+			uniquenessValidation(parceiroFisicoDTO.getRg(), id, "rg",
 					valor -> fisicaRepository.existsByRgAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroFisicoDTO.getCpf(), id, "cpf",
+			uniquenessValidation(parceiroFisicoDTO.getCpf(), id, "cpf",
 					valor -> fisicaRepository.existsByCpfAndIdNot(valor, id), erros);
 			return erros;
 		}
 	}
 
-	public List<String> validarAtributosJuridicoUnicos(@Valid ParceiroJuridicoDTO parceiroJuridicoDTO) {
+	public List<String> jurididicoUniqueAttributeValidation(@Valid ParceiroJuridicoDTO parceiroJuridicoDTO) {
 		List<String> erros = new ArrayList<>();
 		if (parceiroJuridicoDTO.getId() == null) {
-			validarUnicidade(parceiroJuridicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
+			uniquenessValidation(parceiroJuridicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
 					erros);
-			validarUnicidade(parceiroJuridicoDTO.getEmail(), null, "email",
+			uniquenessValidation(parceiroJuridicoDTO.getEmail(), null, "email",
 					valor -> pessoaRepository.existsByEmail(valor), erros);
-			validarUnicidade(parceiroJuridicoDTO.getTelefone(), null, "telefone",
+			uniquenessValidation(parceiroJuridicoDTO.getTelefone(), null, "telefone",
 					valor -> pessoaRepository.existsByTelefone(valor), erros);
-			validarUnicidade(parceiroJuridicoDTO.getIe(), null, "ie", valor -> juridicaRepository.existsByIe(valor),
+			uniquenessValidation(parceiroJuridicoDTO.getIe(), null, "ie", valor -> juridicaRepository.existsByIe(valor),
 					erros);
-			validarUnicidade(parceiroJuridicoDTO.getCnpj(), null, "cnpj",
+			uniquenessValidation(parceiroJuridicoDTO.getCnpj(), null, "cnpj",
 					valor -> juridicaRepository.existsByCnpj(valor), erros);
 			return erros;
 		} else {
 			UUID id = parceiroJuridicoDTO.getId();
-			validarUnicidade(parceiroJuridicoDTO.getNome(), id, "nome",
+			uniquenessValidation(parceiroJuridicoDTO.getNome(), id, "nome",
 					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroJuridicoDTO.getEmail(), id, "email",
+			uniquenessValidation(parceiroJuridicoDTO.getEmail(), id, "email",
 					valor -> pessoaRepository.existsByEmailAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroJuridicoDTO.getTelefone(), id, "telefone",
+			uniquenessValidation(parceiroJuridicoDTO.getTelefone(), id, "telefone",
 					valor -> pessoaRepository.existsByTelefoneAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroJuridicoDTO.getIe(), id, "rg",
+			uniquenessValidation(parceiroJuridicoDTO.getIe(), id, "rg",
 					valor -> juridicaRepository.existsByIeAndIdNot(valor, id), erros);
-			validarUnicidade(parceiroJuridicoDTO.getCnpj(), id, "cpf",
+			uniquenessValidation(parceiroJuridicoDTO.getCnpj(), id, "cpf",
 					valor -> juridicaRepository.existsByCnpjAndIdNot(valor, id), erros);
 			return erros;
 		}
 	}
 
-	private void validarUnicidade(String valor, UUID id, String campo, Function<String, Boolean> verificaUnicidade,
+	private void uniquenessValidation(String valor, UUID id, String campo, Function<String, Boolean> verificaUnicidade,
 			List<String> erros) {
 		if (valor == null || valor.isBlank()) {
 			return; // Ignora valores nulos ou vazios
@@ -258,11 +257,11 @@ public class ParceiroService {
 		}
 	}
 
-	public boolean existeParceiroPorId(UUID id) {
+	public boolean existsById(UUID id) {
 		return parceiroRepository.existsById(id);
 	}
 
-	public ParceiroFisicoDTO buscarPessoaFisica(UUID id) {
+	public ParceiroFisicoDTO findPessoaFisicaById(UUID id) {
 		// Buscar a pessoa independente do tipo
 		Pessoa pessoa = pessoaRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
@@ -277,7 +276,7 @@ public class ParceiroService {
 		return parceiroMapper.toParceiroFisicoDTO(fisica, parceiro);
 	}
 
-	public ParceiroJuridicoDTO buscarPessoaJuridica(UUID id) {
+	public ParceiroJuridicoDTO findPessoaJuridicaById(UUID id) {
 		// Buscar a pessoa independente do tipo
 		Pessoa pessoa = pessoaRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));

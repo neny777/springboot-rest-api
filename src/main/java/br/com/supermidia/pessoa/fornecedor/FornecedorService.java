@@ -66,7 +66,7 @@ public class FornecedorService {
 	}
 
 	@Transactional
-	public void editarFornecedorFisico(UUID id, FornecedorFisicoDTO fornecedorFisicoDTO) {
+	public void updateFisico(UUID id, FornecedorFisicoDTO fornecedorFisicoDTO) {
 		// Busca o fornecedor existente
 		Fornecedor fornecedor = fornecedorRepository.findByPessoaId(fornecedorFisicoDTO.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
@@ -77,7 +77,7 @@ public class FornecedorService {
 	}
 
 	@Transactional
-	public void editarFornecedorJuridico(UUID id, FornecedorJuridicoDTO fornecedorJuridicoDTO) {
+	public void updateJuridico(UUID id, FornecedorJuridicoDTO fornecedorJuridicoDTO) {
 		// Busca o fornecedor existente
 		Fornecedor fornecedor = fornecedorRepository.findByPessoaId(fornecedorJuridicoDTO.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
@@ -88,8 +88,7 @@ public class FornecedorService {
 	}
 
 	@Transactional
-	public void delete(UUID fornecedorId) {
-
+	public void deleteById(UUID fornecedorId) {
 		Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
 				.orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
 		Fisica fisica;
@@ -122,7 +121,7 @@ public class FornecedorService {
 		}
 	}
 
-	public List<FornecedorDTO> listarFornecedoresDTO() {
+	public List<FornecedorDTO> findAll() {
 		List<Fornecedor> fornecedores = fornecedorRepository.findAll();
 		List<FornecedorDTO> fornecedoresDTO = new ArrayList<>();
 		for (Fornecedor fornecedor : fornecedores) {
@@ -140,7 +139,7 @@ public class FornecedorService {
 	}
 
 	@Transactional(readOnly = true)
-	public FornecedorDTO buscarPorId(UUID id) {
+	public FornecedorDTO findById(UUID id) {
 		// Buscar na tabela de pessoas físicas
 		Optional<Fisica> fisicaOptional = fisicaRepository.findById(id);
 		if (fisicaOptional.isPresent()) {
@@ -161,7 +160,7 @@ public class FornecedorService {
 		throw new IllegalArgumentException("Fornecedor não encontrado.");
 	}
 
-	public FornecedorFisicoDTO buscarFornecedorFisico(UUID id) {
+	public FornecedorFisicoDTO findFisicoById(UUID id) {
 		// Buscar o fornecedor pelo ID
 		Fornecedor fornecedor = fornecedorRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Fornecedor não encontrado com o ID: " + id));
@@ -173,7 +172,7 @@ public class FornecedorService {
 		return fornecedorMapper.toFornecedorFisicoDTO(fisica, fornecedor);
 	}
 
-	public FornecedorJuridicoDTO buscarFornecedorJuridico(UUID id) {
+	public FornecedorJuridicoDTO findJuridicoById(UUID id) {
 		// Buscar o fornecedor pelo ID
 		Fornecedor fornecedor = fornecedorRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Fornecedor não encontrado com o ID: " + id));
@@ -185,67 +184,67 @@ public class FornecedorService {
 		return fornecedorMapper.toFornecedorJuridicoDTO(juridica, fornecedor);
 	}
 
-	public List<String> validarAtributosFisicoUnicos(FornecedorFisicoDTO fornecedorFisicoDTO) {
+	public List<String> fisicoUniqueAttributeValidation(FornecedorFisicoDTO fornecedorFisicoDTO) {
 		List<String> erros = new ArrayList<>();
 		if (fornecedorFisicoDTO.getId() == null) {
-			validarUnicidade(fornecedorFisicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
+			uniquenessValidation(fornecedorFisicoDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
 					erros);
-			validarUnicidade(fornecedorFisicoDTO.getEmail(), null, "email",
+			uniquenessValidation(fornecedorFisicoDTO.getEmail(), null, "email",
 					valor -> pessoaRepository.existsByEmail(valor), erros);
-			validarUnicidade(fornecedorFisicoDTO.getTelefone(), null, "telefone",
+			uniquenessValidation(fornecedorFisicoDTO.getTelefone(), null, "telefone",
 					valor -> pessoaRepository.existsByTelefone(valor), erros);
-			validarUnicidade(fornecedorFisicoDTO.getRg(), null, "rg", valor -> fisicaRepository.existsByRg(valor),
+			uniquenessValidation(fornecedorFisicoDTO.getRg(), null, "rg", valor -> fisicaRepository.existsByRg(valor),
 					erros);
-			validarUnicidade(fornecedorFisicoDTO.getCpf(), null, "cpf", valor -> fisicaRepository.existsByCpf(valor),
+			uniquenessValidation(fornecedorFisicoDTO.getCpf(), null, "cpf", valor -> fisicaRepository.existsByCpf(valor),
 					erros);
 			return erros;
 		} else {
 			UUID id = fornecedorFisicoDTO.getId();
-			validarUnicidade(fornecedorFisicoDTO.getNome(), id, "nome",
+			uniquenessValidation(fornecedorFisicoDTO.getNome(), id, "nome",
 					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorFisicoDTO.getEmail(), id, "email",
+			uniquenessValidation(fornecedorFisicoDTO.getEmail(), id, "email",
 					valor -> pessoaRepository.existsByEmailAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorFisicoDTO.getTelefone(), id, "telefone",
+			uniquenessValidation(fornecedorFisicoDTO.getTelefone(), id, "telefone",
 					valor -> pessoaRepository.existsByTelefoneAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorFisicoDTO.getRg(), id, "rg",
+			uniquenessValidation(fornecedorFisicoDTO.getRg(), id, "rg",
 					valor -> fisicaRepository.existsByRgAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorFisicoDTO.getCpf(), id, "cpf",
+			uniquenessValidation(fornecedorFisicoDTO.getCpf(), id, "cpf",
 					valor -> fisicaRepository.existsByCpfAndIdNot(valor, id), erros);
 			return erros;
 		}
 	}
 
-	public List<String> validarAtributosJuridicoUnicos(@Valid FornecedorJuridicoDTO fornecedorJuridicoDTO) {
+	public List<String> jurididicoUniqueAttributeValidation(@Valid FornecedorJuridicoDTO fornecedorJuridicoDTO) {
 		List<String> erros = new ArrayList<>();
 		if (fornecedorJuridicoDTO.getId() == null) {
-			validarUnicidade(fornecedorJuridicoDTO.getNome(), null, "nome",
+			uniquenessValidation(fornecedorJuridicoDTO.getNome(), null, "nome",
 					valor -> pessoaRepository.existsByNome(valor), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getEmail(), null, "email",
+			uniquenessValidation(fornecedorJuridicoDTO.getEmail(), null, "email",
 					valor -> pessoaRepository.existsByEmail(valor), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getTelefone(), null, "telefone",
+			uniquenessValidation(fornecedorJuridicoDTO.getTelefone(), null, "telefone",
 					valor -> pessoaRepository.existsByTelefone(valor), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getIe(), null, "ie", valor -> juridicaRepository.existsByIe(valor),
+			uniquenessValidation(fornecedorJuridicoDTO.getIe(), null, "ie", valor -> juridicaRepository.existsByIe(valor),
 					erros);
-			validarUnicidade(fornecedorJuridicoDTO.getCnpj(), null, "cnpj",
+			uniquenessValidation(fornecedorJuridicoDTO.getCnpj(), null, "cnpj",
 					valor -> juridicaRepository.existsByCnpj(valor), erros);
 			return erros;
 		} else {
 			UUID id = fornecedorJuridicoDTO.getId();
-			validarUnicidade(fornecedorJuridicoDTO.getNome(), id, "nome",
+			uniquenessValidation(fornecedorJuridicoDTO.getNome(), id, "nome",
 					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getEmail(), id, "email",
+			uniquenessValidation(fornecedorJuridicoDTO.getEmail(), id, "email",
 					valor -> pessoaRepository.existsByEmailAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getTelefone(), id, "telefone",
+			uniquenessValidation(fornecedorJuridicoDTO.getTelefone(), id, "telefone",
 					valor -> pessoaRepository.existsByTelefoneAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getIe(), id, "rg",
+			uniquenessValidation(fornecedorJuridicoDTO.getIe(), id, "rg",
 					valor -> juridicaRepository.existsByIeAndIdNot(valor, id), erros);
-			validarUnicidade(fornecedorJuridicoDTO.getCnpj(), id, "cpf",
+			uniquenessValidation(fornecedorJuridicoDTO.getCnpj(), id, "cpf",
 					valor -> juridicaRepository.existsByCnpjAndIdNot(valor, id), erros);
 			return erros;
 		}
 	}
 
-	private void validarUnicidade(String valor, UUID id, String campo, Function<String, Boolean> verificaUnicidade,
+	private void uniquenessValidation(String valor, UUID id, String campo, Function<String, Boolean> verificaUnicidade,
 			List<String> erros) {
 		if (valor == null || valor.isBlank()) {
 			return; // Ignora valores nulos ou vazios
@@ -258,11 +257,11 @@ public class FornecedorService {
 		}
 	}
 
-	public boolean existeFornecedorPorId(UUID id) {
+	public boolean existsById(UUID id) {
 		return fornecedorRepository.existsById(id);
 	}
 
-	public FornecedorFisicoDTO buscarPessoaFisica(UUID id) {
+	public FornecedorFisicoDTO findPessoaFisicaById(UUID id) {
 		// Buscar a pessoa independente do tipo
 		Pessoa pessoa = pessoaRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
@@ -277,7 +276,7 @@ public class FornecedorService {
 		return fornecedorMapper.toFornecedorFisicoDTO(fisica, fornecedor);
 	}
 
-	public FornecedorJuridicoDTO buscarPessoaJuridica(UUID id) {
+	public FornecedorJuridicoDTO findPessoaJuridicaById(UUID id) {
 		// Buscar a pessoa independente do tipo
 		Pessoa pessoa = pessoaRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));

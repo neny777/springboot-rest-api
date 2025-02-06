@@ -29,36 +29,36 @@ public class ParceiroController {
 
 	// Buscar pessoa física
 	@GetMapping("/pessoa/fisica/{id}")
-	public ResponseEntity<ParceiroFisicoDTO> buscarPessoaFisica(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroFisicoDTO> findPessoaFisica(@PathVariable UUID id) {
 
-		ParceiroFisicoDTO parceiroFisicoDTO = parceiroService.buscarPessoaFisica(id);
+		ParceiroFisicoDTO parceiroFisicoDTO = parceiroService.findPessoaFisicaById(id);
 
 		return ResponseEntity.ok(parceiroFisicoDTO);
 	}
 
 	// Buscar pessoa jurídica
 	@GetMapping("/pessoa/juridica/{id}")
-	public ResponseEntity<ParceiroJuridicoDTO> buscarPessoaJuridica(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroJuridicoDTO> findPessoaJuridica(@PathVariable UUID id) {
 
-		ParceiroJuridicoDTO parceiroJuridicoDTO = parceiroService.buscarPessoaJuridica(id);
+		ParceiroJuridicoDTO parceiroJuridicoDTO = parceiroService.findPessoaJuridicaById(id);
 
 		return ResponseEntity.ok(parceiroJuridicoDTO);
 	}
 
 	// Buscar parceiro físico
 	@GetMapping("/fisico/{id}")
-	public ResponseEntity<ParceiroFisicoDTO> buscarParceiroFisico(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroFisicoDTO> findParceiroFisico(@PathVariable UUID id) {
 
-		ParceiroFisicoDTO parceiroFisicoDTO = parceiroService.buscarParceiroFisico(id);
+		ParceiroFisicoDTO parceiroFisicoDTO = parceiroService.findFisicoById(id);
 
 		return ResponseEntity.ok(parceiroFisicoDTO);
 	}
 
 	// Buscar parceiro jurídico
 	@GetMapping("/juridico/{id}")
-	public ResponseEntity<ParceiroJuridicoDTO> buscarParceiroJuridico(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroJuridicoDTO> findParceiroJuridico(@PathVariable UUID id) {
 
-		ParceiroJuridicoDTO parceiroJuridicoDTO = parceiroService.buscarParceiroJuridico(id);
+		ParceiroJuridicoDTO parceiroJuridicoDTO = parceiroService.findJuridicoById(id);
 
 		return ResponseEntity.ok(parceiroJuridicoDTO);
 	}
@@ -84,13 +84,13 @@ public class ParceiroController {
 	public ResponseEntity<?> editarParceiroFisico(@PathVariable UUID id, @RequestBody @Valid ParceiroFisicoDTO dto) {
 
 		// Realiza a validação
-		List<String> erros = parceiroService.validarAtributosFisicoUnicos(dto);
+		List<String> erros = parceiroService.fisicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
-		parceiroService.editarParceiroFisico(id, dto);
+		parceiroService.updateFisico(id, dto);
 		return ResponseEntity.ok("Parceiro atualizado com sucesso!");
 	}
 
@@ -99,13 +99,13 @@ public class ParceiroController {
 	public ResponseEntity<?> editarParceiroJuridico(@PathVariable UUID id, @RequestBody @Valid ParceiroJuridicoDTO dto) {
 
 		// Realiza a validação
-		List<String> erros = parceiroService.validarAtributosJuridicoUnicos(dto);
+		List<String> erros = parceiroService.jurididicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
-		parceiroService.editarParceiroJuridico(id, dto);
+		parceiroService.updateJuridico(id, dto);
 		return ResponseEntity.ok("Parceiro atualizado com sucesso!");
 	}
 
@@ -113,7 +113,7 @@ public class ParceiroController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> excluirParceiro(@PathVariable UUID id) {
 		System.out.println("endpoint delete api parceiros id");
-		parceiroService.delete(id);
+		parceiroService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -121,27 +121,27 @@ public class ParceiroController {
 	@GetMapping
 	public ResponseEntity<List<ParceiroDTO>> listarParceiros() {
 
-		List<ParceiroDTO> parceiros = parceiroService.listarParceirosDTO();
+		List<ParceiroDTO> parceiros = parceiroService.findAll();
 		return ResponseEntity.ok(parceiros);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ParceiroDTO> buscarPorId(@PathVariable UUID id) {
-		ParceiroDTO parceiroDTO = parceiroService.buscarPorId(id);
+	public ResponseEntity<ParceiroDTO> findById(@PathVariable UUID id) {
+		ParceiroDTO parceiroDTO = parceiroService.findById(id);
 		return ResponseEntity.ok(parceiroDTO);
 	}
 
 	@PostMapping("/fisico/validar")
 	public ResponseEntity<?> validarParceiroFisico(@RequestBody @Valid ParceiroFisicoDTO dto) {
 		// Realiza a validação
-		List<String> erros = parceiroService.validarAtributosFisicoUnicos(dto);
+		List<String> erros = parceiroService.fisicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
 		if (dto.getId() != null) {
-			boolean cadastrado = parceiroService.existeParceiroPorId(dto.getId());
+			boolean cadastrado = parceiroService.existsById(dto.getId());
 			if (cadastrado) {
 				erros.add("Parceiro já está cadastrado");
 				return ResponseEntity.badRequest().body(Map.of("errors", erros));
@@ -154,14 +154,14 @@ public class ParceiroController {
 	@PostMapping("/juridico/validar")
 	public ResponseEntity<?> validarParceiroJuridico(@RequestBody @Valid ParceiroJuridicoDTO dto) {
 		// Realiza a validação
-		List<String> erros = parceiroService.validarAtributosJuridicoUnicos(dto);
+		List<String> erros = parceiroService.jurididicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
 		if (dto.getId() != null) {
-			boolean cadastrado = parceiroService.existeParceiroPorId(dto.getId());
+			boolean cadastrado = parceiroService.existsById(dto.getId());
 			if (cadastrado) {
 				erros.add("Parceiro já está cadastrado");
 				return ResponseEntity.badRequest().body(Map.of("errors", erros));

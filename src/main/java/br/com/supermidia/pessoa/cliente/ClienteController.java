@@ -29,43 +29,43 @@ public class ClienteController {
 
 	// Buscar pessoa física
 	@GetMapping("/pessoa/fisica/{id}")
-	public ResponseEntity<ClienteFisicoDTO> buscarPessoaFisica(@PathVariable UUID id) {
+	public ResponseEntity<ClienteFisicoDTO> findPessoaFisica(@PathVariable UUID id) {
 
-		ClienteFisicoDTO clienteFisicoDTO = clienteService.buscarPessoaFisica(id);
+		ClienteFisicoDTO clienteFisicoDTO = clienteService.findPessoaFisicaById(id);
 
 		return ResponseEntity.ok(clienteFisicoDTO);
 	}
 
 	// Buscar pessoa jurídica
 	@GetMapping("/pessoa/juridica/{id}")
-	public ResponseEntity<ClienteJuridicoDTO> buscarPessoaJuridica(@PathVariable UUID id) {
+	public ResponseEntity<ClienteJuridicoDTO> findPessoaJuridica(@PathVariable UUID id) {
 
-		ClienteJuridicoDTO clienteJuridicoDTO = clienteService.buscarPessoaJuridica(id);
+		ClienteJuridicoDTO clienteJuridicoDTO = clienteService.findPessoaJuridicaById(id);
 
 		return ResponseEntity.ok(clienteJuridicoDTO);
 	}
 
 	// Buscar cliente físico
 	@GetMapping("/fisico/{id}")
-	public ResponseEntity<ClienteFisicoDTO> buscarClienteFisico(@PathVariable UUID id) {
+	public ResponseEntity<ClienteFisicoDTO> findClienteFisico(@PathVariable UUID id) {
 
-		ClienteFisicoDTO clienteFisicoDTO = clienteService.buscarClienteFisico(id);
+		ClienteFisicoDTO clienteFisicoDTO = clienteService.findFisicoById(id);
 
 		return ResponseEntity.ok(clienteFisicoDTO);
 	}
 
 	// Buscar cliente jurídico
 	@GetMapping("/juridico/{id}")
-	public ResponseEntity<ClienteJuridicoDTO> buscarClienteJuridico(@PathVariable UUID id) {
+	public ResponseEntity<ClienteJuridicoDTO> findClienteJuridico(@PathVariable UUID id) {
 
-		ClienteJuridicoDTO clienteJuridicoDTO = clienteService.buscarClienteJuridico(id);
+		ClienteJuridicoDTO clienteJuridicoDTO = clienteService.findJuridicoById(id);
 
 		return ResponseEntity.ok(clienteJuridicoDTO);
 	}
 
 	// Cadastrar cliente físico
 	@PostMapping("/fisico")
-	public ResponseEntity<?> CadastrarClienteFisico(@RequestBody @Valid ClienteFisicoDTO dto) {
+	public ResponseEntity<?> CreateClienteFisico(@RequestBody @Valid ClienteFisicoDTO dto) {
 
 		clienteService.saveFisico(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -73,7 +73,7 @@ public class ClienteController {
 
 	// Cadastrar cliente jurídico
 	@PostMapping("/juridico")
-	public ResponseEntity<?> CadastrarClienteJuridico(@RequestBody @Valid ClienteJuridicoDTO dto) {
+	public ResponseEntity<?> CreateClienteJuridico(@RequestBody @Valid ClienteJuridicoDTO dto) {
 
 		clienteService.saveJuridico(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -84,13 +84,13 @@ public class ClienteController {
 	public ResponseEntity<?> editarClienteFisico(@PathVariable UUID id, @RequestBody @Valid ClienteFisicoDTO dto) {
 
 		// Realiza a validação
-		List<String> erros = clienteService.validarAtributosFisicoUnicos(dto);
+		List<String> erros = clienteService.fisicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
-		clienteService.editarClienteFisico(id, dto);
+		clienteService.updateFisico(id, dto);
 		return ResponseEntity.ok("Cliente atualizado com sucesso!");
 	}
 
@@ -99,13 +99,13 @@ public class ClienteController {
 	public ResponseEntity<?> editarClienteJuridico(@PathVariable UUID id, @RequestBody @Valid ClienteJuridicoDTO dto) {
 
 		// Realiza a validação
-		List<String> erros = clienteService.validarAtributosJuridicoUnicos(dto);
+		List<String> erros = clienteService.jurididicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
-		clienteService.editarClienteJuridico(id, dto);
+		clienteService.updateJuridico(id, dto);
 		return ResponseEntity.ok("Cliente atualizado com sucesso!");
 	}
 
@@ -113,7 +113,7 @@ public class ClienteController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> excluirCliente(@PathVariable UUID id) {
 		System.out.println("endpoint delete api clientes id");
-		clienteService.delete(id);
+		clienteService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -121,13 +121,13 @@ public class ClienteController {
 	@GetMapping
 	public ResponseEntity<List<ClienteDTO>> listarClientes() {
 
-		List<ClienteDTO> clientes = clienteService.listarClientesDTO();
+		List<ClienteDTO> clientes = clienteService.findAll();
 		return ResponseEntity.ok(clientes);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ClienteDTO> buscarPorId(@PathVariable UUID id) {
-		ClienteDTO clienteDTO = clienteService.buscarPorId(id);
+	public ResponseEntity<ClienteDTO> findById(@PathVariable UUID id) {
+		ClienteDTO clienteDTO = clienteService.findById(id);
 		return ResponseEntity.ok(clienteDTO);
 	}
 
@@ -136,7 +136,7 @@ public class ClienteController {
 		System.out.println("DTO");
 		System.out.println(dto.getNome());
 		// Realiza a validação
-		List<String> erros = clienteService.validarAtributosFisicoUnicos(dto);
+		List<String> erros = clienteService.fisicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			
@@ -148,7 +148,7 @@ public class ClienteController {
 		}
 
 		if (dto.getId() != null) {
-			boolean cadastrado = clienteService.existeClientePorId(dto.getId());
+			boolean cadastrado = clienteService.existsById(dto.getId());
 			if (cadastrado) {
 				erros.add("Cliente já está cadastrado");
 				return ResponseEntity.badRequest().body(Map.of("errors", erros));
@@ -161,14 +161,14 @@ public class ClienteController {
 	@PostMapping("/juridico/validar")
 	public ResponseEntity<?> validarClienteJuridico(@RequestBody @Valid ClienteJuridicoDTO dto) {
 		// Realiza a validação
-		List<String> erros = clienteService.validarAtributosJuridicoUnicos(dto);
+		List<String> erros = clienteService.jurididicoUniqueAttributeValidation(dto);
 
 		if (!erros.isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 
 		if (dto.getId() != null) {
-			boolean cadastrado = clienteService.existeClientePorId(dto.getId());
+			boolean cadastrado = clienteService.existsById(dto.getId());
 			if (cadastrado) {
 				erros.add("Cliente já está cadastrado");
 				return ResponseEntity.badRequest().body(Map.of("errors", erros));
