@@ -133,10 +133,17 @@ public class ClienteController {
 
 	@PostMapping("/fisico/validar")
 	public ResponseEntity<?> validarClienteFisico(@RequestBody @Valid ClienteFisicoDTO dto) {
+		System.out.println("DTO");
+		System.out.println(dto.getNome());
 		// Realiza a validação
 		List<String> erros = clienteService.validarAtributosFisicoUnicos(dto);
 
 		if (!erros.isEmpty()) {
+			
+			System.out.println("Erro(s): " + erros.size());
+			for (String string : erros) {
+				System.out.println(string);
+			}
 			return ResponseEntity.badRequest().body(Map.of("errors", erros));
 		}
 

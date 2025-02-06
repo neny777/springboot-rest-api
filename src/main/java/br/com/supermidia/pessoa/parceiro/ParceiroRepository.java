@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ParceiroRepository extends JpaRepository<Parceiro, UUID> {
+	
 	boolean existsByPessoaId(UUID pessoaId);
 
 	boolean existsByPessoaNome(String nome);
