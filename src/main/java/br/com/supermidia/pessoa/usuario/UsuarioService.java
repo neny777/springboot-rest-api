@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.supermidia.pessoa.colaborador.Colaborador;
+import br.com.supermidia.pessoa.colaborador.ColaboradorDTO;
+import br.com.supermidia.pessoa.colaborador.ColaboradorMapper;
 import br.com.supermidia.pessoa.colaborador.ColaboradorService;
 import jakarta.transaction.Transactional;
 
@@ -22,6 +24,9 @@ public class UsuarioService {
 
 	@Autowired
 	private UsuarioMapper usuarioMapper;
+	
+	@Autowired
+	private ColaboradorMapper colaboradorMapper;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -29,11 +34,13 @@ public class UsuarioService {
 	// Criar um novo usuário
 	public Usuario create(UsuarioDTO usuarioDTO) {
 		// Buscar colaborador existente
-		Colaborador colaborador = colaboradorService.findById(usuarioDTO.getId());
-
-		if (colaborador == null) {
+		ColaboradorDTO colaboradorDTO = colaboradorService.findById(usuarioDTO.getId());
+		
+		if (colaboradorDTO == null) {
 			throw new IllegalArgumentException("Colaborador não encontrado.");
 		}
+		
+		Colaborador colaborador = colaboradorMapper.toColaborador(colaboradorDTO);
 
 		if (colaborador.getUsuario() != null) {
 			throw new IllegalArgumentException("Este colaborador já possui um usuário associado.");

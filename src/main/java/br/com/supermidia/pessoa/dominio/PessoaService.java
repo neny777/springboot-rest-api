@@ -72,6 +72,6 @@ public class PessoaService {
     }
 
     public boolean isColaborador(UUID id) {
-        return colaboradorRepository.existsByFisicaId(id);
+        return colaboradorRepository.existsById(id);
     }
 }

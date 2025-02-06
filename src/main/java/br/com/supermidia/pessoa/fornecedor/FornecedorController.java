@@ -29,7 +29,7 @@ public class FornecedorController {
 
 	// Buscar pessoa física
 	@GetMapping("/pessoa/fisica/{id}")
-	public ResponseEntity<FornecedorFisicoDTO> findPessoaFisica(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorFisicoDTO> findPessoaFisicaById(@PathVariable UUID id) {
 
 		FornecedorFisicoDTO fornecedorFisicoDTO = fornecedorService.findPessoaFisicaById(id);
 
@@ -38,7 +38,7 @@ public class FornecedorController {
 
 	// Buscar pessoa jurídica
 	@GetMapping("/pessoa/juridica/{id}")
-	public ResponseEntity<FornecedorJuridicoDTO> findPessoaJuridica(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorJuridicoDTO> findPessoaJuridicaById(@PathVariable UUID id) {
 
 		FornecedorJuridicoDTO fornecedorJuridicoDTO = fornecedorService.findPessoaJuridicaById(id);
 
@@ -47,7 +47,7 @@ public class FornecedorController {
 
 	// Buscar fornecedor físico
 	@GetMapping("/fisico/{id}")
-	public ResponseEntity<FornecedorFisicoDTO> findFornecedorFisico(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorFisicoDTO> findFornecedorFisicoById(@PathVariable UUID id) {
 
 		FornecedorFisicoDTO fornecedorFisicoDTO = fornecedorService.findFisicoById(id);
 
@@ -56,7 +56,7 @@ public class FornecedorController {
 
 	// Buscar fornecedor jurídico
 	@GetMapping("/juridico/{id}")
-	public ResponseEntity<FornecedorJuridicoDTO> findFornecedorJuridico(@PathVariable UUID id) {
+	public ResponseEntity<FornecedorJuridicoDTO> findFornecedorJuridicoById(@PathVariable UUID id) {
 
 		FornecedorJuridicoDTO fornecedorJuridicoDTO = fornecedorService.findJuridicoById(id);
 
@@ -65,7 +65,7 @@ public class FornecedorController {
 
 	// Cadastrar fornecedor físico
 	@PostMapping("/fisico")
-	public ResponseEntity<?> CadastrarFornecedorFisico(@RequestBody @Valid FornecedorFisicoDTO dto) {
+	public ResponseEntity<?> CreateFornecedorFisico(@RequestBody @Valid FornecedorFisicoDTO dto) {
 
 		fornecedorService.saveFisico(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -73,7 +73,7 @@ public class FornecedorController {
 
 	// Cadastrar fornecedor jurídico
 	@PostMapping("/juridico")
-	public ResponseEntity<?> CadastrarFornecedorJuridico(@RequestBody @Valid FornecedorJuridicoDTO dto) {
+	public ResponseEntity<?> CreateFornecedorJuridico(@RequestBody @Valid FornecedorJuridicoDTO dto) {
 
 		fornecedorService.saveJuridico(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -81,7 +81,7 @@ public class FornecedorController {
 
 	// Atualizar fornecedor físico
 	@PutMapping("/fisico/{id}")
-	public ResponseEntity<?> editarFornecedorFisico(@PathVariable UUID id, @RequestBody @Valid FornecedorFisicoDTO dto) {
+	public ResponseEntity<?> updateFornecedorFisico(@PathVariable UUID id, @RequestBody @Valid FornecedorFisicoDTO dto) {
 
 		// Realiza a validação
 		List<String> erros = fornecedorService.fisicoUniqueAttributeValidation(dto);
@@ -96,7 +96,7 @@ public class FornecedorController {
 
 	// Atualizar fornecedor jurídico
 	@PutMapping("/juridico/{id}")
-	public ResponseEntity<?> editarFornecedorJuridico(@PathVariable UUID id, @RequestBody @Valid FornecedorJuridicoDTO dto) {
+	public ResponseEntity<?> updateFornecedorJuridico(@PathVariable UUID id, @RequestBody @Valid FornecedorJuridicoDTO dto) {
 
 		// Realiza a validação
 		List<String> erros = fornecedorService.jurididicoUniqueAttributeValidation(dto);
@@ -111,7 +111,7 @@ public class FornecedorController {
 
 	// Excluir fornecedor
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluirFornecedor(@PathVariable UUID id) {
+	public ResponseEntity<Void> deleteFornecedorById(@PathVariable UUID id) {
 		System.out.println("endpoint delete api fornecedores id");
 		fornecedorService.deleteById(id);
 		return ResponseEntity.noContent().build();
@@ -119,7 +119,7 @@ public class FornecedorController {
 
 	// Listar todos os fornecedores
 	@GetMapping
-	public ResponseEntity<List<FornecedorDTO>> listarFornecedores() {
+	public ResponseEntity<List<FornecedorDTO>> findAll() {
 
 		List<FornecedorDTO> fornecedores = fornecedorService.findAll();
 		return ResponseEntity.ok(fornecedores);
@@ -132,7 +132,7 @@ public class FornecedorController {
 	}
 
 	@PostMapping("/fisico/validar")
-	public ResponseEntity<?> validarFornecedorFisico(@RequestBody @Valid FornecedorFisicoDTO dto) {
+	public ResponseEntity<?> validateFornecedorFisico(@RequestBody @Valid FornecedorFisicoDTO dto) {
 		// Realiza a validação
 		List<String> erros = fornecedorService.fisicoUniqueAttributeValidation(dto);
 
@@ -152,7 +152,7 @@ public class FornecedorController {
 	}
 
 	@PostMapping("/juridico/validar")
-	public ResponseEntity<?> validarFornecedorJuridico(@RequestBody @Valid FornecedorJuridicoDTO dto) {
+	public ResponseEntity<?> validateFornecedorJuridico(@RequestBody @Valid FornecedorJuridicoDTO dto) {
 		// Realiza a validação
 		List<String> erros = fornecedorService.jurididicoUniqueAttributeValidation(dto);
 

@@ -29,7 +29,7 @@ public class ClienteController {
 
 	// Buscar pessoa física
 	@GetMapping("/pessoa/fisica/{id}")
-	public ResponseEntity<ClienteFisicoDTO> findPessoaFisica(@PathVariable UUID id) {
+	public ResponseEntity<ClienteFisicoDTO> findPessoaFisicaById(@PathVariable UUID id) {
 
 		ClienteFisicoDTO clienteFisicoDTO = clienteService.findPessoaFisicaById(id);
 
@@ -38,7 +38,7 @@ public class ClienteController {
 
 	// Buscar pessoa jurídica
 	@GetMapping("/pessoa/juridica/{id}")
-	public ResponseEntity<ClienteJuridicoDTO> findPessoaJuridica(@PathVariable UUID id) {
+	public ResponseEntity<ClienteJuridicoDTO> findPessoaJuridicaById(@PathVariable UUID id) {
 
 		ClienteJuridicoDTO clienteJuridicoDTO = clienteService.findPessoaJuridicaById(id);
 
@@ -47,7 +47,7 @@ public class ClienteController {
 
 	// Buscar cliente físico
 	@GetMapping("/fisico/{id}")
-	public ResponseEntity<ClienteFisicoDTO> findClienteFisico(@PathVariable UUID id) {
+	public ResponseEntity<ClienteFisicoDTO> findClienteFisicoById(@PathVariable UUID id) {
 
 		ClienteFisicoDTO clienteFisicoDTO = clienteService.findFisicoById(id);
 
@@ -56,7 +56,7 @@ public class ClienteController {
 
 	// Buscar cliente jurídico
 	@GetMapping("/juridico/{id}")
-	public ResponseEntity<ClienteJuridicoDTO> findClienteJuridico(@PathVariable UUID id) {
+	public ResponseEntity<ClienteJuridicoDTO> findClienteJuridicoById(@PathVariable UUID id) {
 
 		ClienteJuridicoDTO clienteJuridicoDTO = clienteService.findJuridicoById(id);
 
@@ -81,7 +81,7 @@ public class ClienteController {
 
 	// Atualizar cliente físico
 	@PutMapping("/fisico/{id}")
-	public ResponseEntity<?> editarClienteFisico(@PathVariable UUID id, @RequestBody @Valid ClienteFisicoDTO dto) {
+	public ResponseEntity<?> updateClienteFisico(@PathVariable UUID id, @RequestBody @Valid ClienteFisicoDTO dto) {
 
 		// Realiza a validação
 		List<String> erros = clienteService.fisicoUniqueAttributeValidation(dto);
@@ -96,7 +96,7 @@ public class ClienteController {
 
 	// Atualizar cliente jurídico
 	@PutMapping("/juridico/{id}")
-	public ResponseEntity<?> editarClienteJuridico(@PathVariable UUID id, @RequestBody @Valid ClienteJuridicoDTO dto) {
+	public ResponseEntity<?> updateClienteJuridico(@PathVariable UUID id, @RequestBody @Valid ClienteJuridicoDTO dto) {
 
 		// Realiza a validação
 		List<String> erros = clienteService.jurididicoUniqueAttributeValidation(dto);
@@ -111,7 +111,7 @@ public class ClienteController {
 
 	// Excluir cliente
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluirCliente(@PathVariable UUID id) {
+	public ResponseEntity<Void> deleteClienteById(@PathVariable UUID id) {
 		System.out.println("endpoint delete api clientes id");
 		clienteService.deleteById(id);
 		return ResponseEntity.noContent().build();
@@ -119,7 +119,7 @@ public class ClienteController {
 
 	// Listar todos os clientes
 	@GetMapping
-	public ResponseEntity<List<ClienteDTO>> listarClientes() {
+	public ResponseEntity<List<ClienteDTO>> findAll() {
 
 		List<ClienteDTO> clientes = clienteService.findAll();
 		return ResponseEntity.ok(clientes);
@@ -132,7 +132,7 @@ public class ClienteController {
 	}
 
 	@PostMapping("/fisico/validar")
-	public ResponseEntity<?> validarClienteFisico(@RequestBody @Valid ClienteFisicoDTO dto) {
+	public ResponseEntity<?> validateClienteFisico(@RequestBody @Valid ClienteFisicoDTO dto) {
 		System.out.println("DTO");
 		System.out.println(dto.getNome());
 		// Realiza a validação
@@ -159,7 +159,7 @@ public class ClienteController {
 	}
 
 	@PostMapping("/juridico/validar")
-	public ResponseEntity<?> validarClienteJuridico(@RequestBody @Valid ClienteJuridicoDTO dto) {
+	public ResponseEntity<?> validateClienteJuridico(@RequestBody @Valid ClienteJuridicoDTO dto) {
 		// Realiza a validação
 		List<String> erros = clienteService.jurididicoUniqueAttributeValidation(dto);
 

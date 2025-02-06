@@ -4,54 +4,77 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import br.com.supermidia.pessoa.dominio.Fisica;
+
 @Mapper(componentModel = "spring")
 public interface ColaboradorMapper {
 
-	@Mapping(target = "fisica.nome", source = "nome")
-	@Mapping(target = "fisica.email", source = "email")
-	@Mapping(target = "fisica.telefone", source = "telefone")
-	@Mapping(target = "fisica.cep", source = "cep")
-	@Mapping(target = "fisica.logradouro", source = "logradouro")
-	@Mapping(target = "fisica.numero", source = "numero")
-	@Mapping(target = "fisica.bairro", source = "bairro")
-	@Mapping(target = "fisica.municipio", source = "municipio")
-	@Mapping(target = "fisica.uf", source = "uf")
-	@Mapping(target = "fisica.cpf", source = "cpf")
-	@Mapping(target = "fisica.rg", source = "rg")
-	@Mapping(target = "fisica.sexo", source = "sexo")
-	@Mapping(target = "fisica.dataNascimento", source = "nascimento")
-	@Mapping(target = "usuario", ignore = true) // Ignorar campo "usuario"
-	Colaborador toEntity(ColaboradorDTO dto);
-	
-	
-	@Mapping(target = "nome", source = "fisica.nome")
-	@Mapping(target = "email", source = "fisica.email")
-	@Mapping(target = "telefone", source = "fisica.telefone")
-	@Mapping(target = "cep", source = "fisica.cep")
-	@Mapping(target = "logradouro", source = "fisica.logradouro")
-	@Mapping(target = "numero", source = "fisica.numero")
-	@Mapping(target = "bairro", source = "fisica.bairro")
-	@Mapping(target = "municipio", source = "fisica.municipio")
-	@Mapping(target = "uf", source = "fisica.uf")
-	@Mapping(target = "cpf", source = "fisica.cpf")
-	@Mapping(target = "rg", source = "fisica.rg")
-	@Mapping(target = "sexo", source = "fisica.sexo")
-	@Mapping(target = "nascimento", source = "fisica.dataNascimento")
-	ColaboradorDTO toDto(Colaborador entity);
+	// Converte de ColaboradorDTO para Colaborador
+	@Mapping(source = "cpf", target = "fisica.cpf")
+	@Mapping(source = "nome", target = "fisica.nome")
+	@Mapping(source = "email", target = "fisica.email")
+	@Mapping(source = "telefone", target = "fisica.telefone")
+	@Mapping(source = "cep", target = "fisica.cep")
+	@Mapping(source = "logradouro", target = "fisica.logradouro")
+	@Mapping(source = "numero", target = "fisica.numero")
+	@Mapping(source = "bairro", target = "fisica.bairro")
+	@Mapping(source = "municipio", target = "fisica.municipio")
+	@Mapping(source = "uf", target = "fisica.uf")
+	@Mapping(source = "rg", target = "fisica.rg")
+	@Mapping(source = "sexo", target = "fisica.sexo")
+	@Mapping(source = "nascimento", target = "fisica.dataNascimento")
+	@Mapping(target = "usuario", ignore = true) // Ignora o campo usuario
+	Colaborador toColaborador(ColaboradorDTO dto);
 
-	@Mapping(target = "fisica.nome", source = "nome")
-	@Mapping(target = "fisica.email", source = "email")
-	@Mapping(target = "fisica.telefone", source = "telefone")
-	@Mapping(target = "fisica.cep", source = "cep")
-	@Mapping(target = "fisica.logradouro", source = "logradouro")
-	@Mapping(target = "fisica.numero", source = "numero")
-	@Mapping(target = "fisica.bairro", source = "bairro")
-	@Mapping(target = "fisica.municipio", source = "municipio")
-	@Mapping(target = "fisica.uf", source = "uf")
-	@Mapping(target = "fisica.cpf", source = "cpf")
-	@Mapping(target = "fisica.rg", source = "rg")
-	@Mapping(target = "fisica.sexo", source = "sexo")
-	@Mapping(target = "fisica.dataNascimento", source = "nascimento")
-	@Mapping(target = "usuario", ignore = true) // Ignorar campo "usuario"
-	void updateEntityFromDto(ColaboradorDTO dto, @MappingTarget Colaborador entity);
+	// Converte de Colaborador para ColaboradorDTO
+	@Mapping(source = "fisica.cpf", target = "cpf")
+	@Mapping(source = "fisica.nome", target = "nome")
+	@Mapping(source = "fisica.email", target = "email")
+	@Mapping(source = "fisica.telefone", target = "telefone")
+	@Mapping(source = "fisica.cep", target = "cep")
+	@Mapping(source = "fisica.logradouro", target = "logradouro")
+	@Mapping(source = "fisica.numero", target = "numero")
+	@Mapping(source = "fisica.bairro", target = "bairro")
+	@Mapping(source = "fisica.municipio", target = "municipio")
+	@Mapping(source = "fisica.uf", target = "uf")
+	@Mapping(source = "fisica.rg", target = "rg")
+	@Mapping(source = "fisica.sexo", target = "sexo")
+	@Mapping(source = "fisica.dataNascimento", target = "nascimento")
+	ColaboradorDTO toColaboradorDTO(Colaborador colaborador);
+
+	// Atualiza um Colaborador existente a partir de um ColaboradorDTO
+	@Mapping(source = "cpf", target = "fisica.cpf")
+	@Mapping(source = "nome", target = "fisica.nome")
+	@Mapping(source = "email", target = "fisica.email")
+	@Mapping(source = "telefone", target = "fisica.telefone")
+	@Mapping(source = "cep", target = "fisica.cep")
+	@Mapping(source = "logradouro", target = "fisica.logradouro")
+	@Mapping(source = "numero", target = "fisica.numero")
+	@Mapping(source = "bairro", target = "fisica.bairro")
+	@Mapping(source = "municipio", target = "fisica.municipio")
+	@Mapping(source = "uf", target = "fisica.uf")
+	@Mapping(source = "rg", target = "fisica.rg")
+	@Mapping(source = "sexo", target = "fisica.sexo")
+	@Mapping(source = "nascimento", target = "fisica.dataNascimento")
+	@Mapping(target = "usuario", ignore = true) // Ignora o campo usuario
+	void updateColaboradorFromDTO(ColaboradorDTO dto, @MappingTarget Colaborador colaborador);
+
+	// Mapeamento adicional para quando Fisica e Colaborador são fornecidos
+	// separadamente
+	@Mapping(source = "fisica.cpf", target = "cpf")
+	@Mapping(source = "fisica.nome", target = "nome")
+	@Mapping(source = "fisica.email", target = "email")
+	@Mapping(source = "fisica.telefone", target = "telefone")
+	@Mapping(source = "fisica.cep", target = "cep")
+	@Mapping(source = "fisica.logradouro", target = "logradouro")
+	@Mapping(source = "fisica.numero", target = "numero")
+	@Mapping(source = "fisica.bairro", target = "bairro")
+	@Mapping(source = "fisica.municipio", target = "municipio")
+	@Mapping(source = "fisica.uf", target = "uf")
+	@Mapping(source = "fisica.rg", target = "rg")
+	@Mapping(source = "fisica.sexo", target = "sexo")
+	@Mapping(source = "fisica.dataNascimento", target = "nascimento")
+	@Mapping(source = "colaborador.ctps", target = "ctps")
+	@Mapping(source = "colaborador.id", target = "id")
+	ColaboradorDTO toColaboradorDTO(Fisica fisica, Colaborador colaborador);
 }

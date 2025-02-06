@@ -5,29 +5,24 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ColaboradorRepository extends JpaRepository<Colaborador, UUID> {
-	boolean existsByFisicaId(UUID pessoaId);
 	
+	boolean existsByFisicaId(UUID id);
+
 	boolean existsByFisicaNome(String nome);
 
 	boolean existsByFisicaEmail(String email);
 
 	boolean existsByFisicaTelefone(String telefone);
 
-	boolean existsByFisicaCpf(String cpf);
+	boolean existsByFisicaNomeAndIdNot(String nome, UUID id);
 
-	boolean existsByFisicaRg(String rg);
+	boolean existsByFisicaEmailAndIdNot(String email, UUID id);
 
-	boolean existsByCtps(String ctps);
-	
+	boolean existsByFisicaTelefoneAndIdNot(String telefone, UUID id);
+
 	Colaborador getByFisicaNome(String nome);
-	
+
 	Colaborador getByFisicaEmail(String email);
-	
+
 	Colaborador getByFisicaTelefone(String telefone);
-	
-	Colaborador getByFisicaCpf(String cpf);
-	
-	Colaborador getByFisicaRg(String rg);
-	
-	Colaborador getByCtps(String ctps);
 }

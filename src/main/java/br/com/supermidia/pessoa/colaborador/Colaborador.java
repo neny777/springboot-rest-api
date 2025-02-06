@@ -28,7 +28,7 @@ public class Colaborador {
 	@Column(unique = true)
 	private String ctps;
 
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne
 	@MapsId
 	@JoinColumn(name = "pessoa_id")
 	private Fisica fisica;

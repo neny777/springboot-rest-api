@@ -29,7 +29,7 @@ public class ParceiroController {
 
 	// Buscar pessoa física
 	@GetMapping("/pessoa/fisica/{id}")
-	public ResponseEntity<ParceiroFisicoDTO> findPessoaFisica(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroFisicoDTO> findPessoaFisicaById(@PathVariable UUID id) {
 
 		ParceiroFisicoDTO parceiroFisicoDTO = parceiroService.findPessoaFisicaById(id);
 
@@ -38,7 +38,7 @@ public class ParceiroController {
 
 	// Buscar pessoa jurídica
 	@GetMapping("/pessoa/juridica/{id}")
-	public ResponseEntity<ParceiroJuridicoDTO> findPessoaJuridica(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroJuridicoDTO> findPessoaJuridicaById(@PathVariable UUID id) {
 
 		ParceiroJuridicoDTO parceiroJuridicoDTO = parceiroService.findPessoaJuridicaById(id);
 
@@ -47,7 +47,7 @@ public class ParceiroController {
 
 	// Buscar parceiro físico
 	@GetMapping("/fisico/{id}")
-	public ResponseEntity<ParceiroFisicoDTO> findParceiroFisico(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroFisicoDTO> findParceiroFisicoById(@PathVariable UUID id) {
 
 		ParceiroFisicoDTO parceiroFisicoDTO = parceiroService.findFisicoById(id);
 
@@ -56,7 +56,7 @@ public class ParceiroController {
 
 	// Buscar parceiro jurídico
 	@GetMapping("/juridico/{id}")
-	public ResponseEntity<ParceiroJuridicoDTO> findParceiroJuridico(@PathVariable UUID id) {
+	public ResponseEntity<ParceiroJuridicoDTO> findParceiroJuridicoById(@PathVariable UUID id) {
 
 		ParceiroJuridicoDTO parceiroJuridicoDTO = parceiroService.findJuridicoById(id);
 
@@ -65,7 +65,7 @@ public class ParceiroController {
 
 	// Cadastrar parceiro físico
 	@PostMapping("/fisico")
-	public ResponseEntity<?> CadastrarParceiroFisico(@RequestBody @Valid ParceiroFisicoDTO dto) {
+	public ResponseEntity<?> CreateParceiroFisico(@RequestBody @Valid ParceiroFisicoDTO dto) {
 
 		parceiroService.saveFisico(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -73,7 +73,7 @@ public class ParceiroController {
 
 	// Cadastrar parceiro jurídico
 	@PostMapping("/juridico")
-	public ResponseEntity<?> CadastrarParceiroJuridico(@RequestBody @Valid ParceiroJuridicoDTO dto) {
+	public ResponseEntity<?> CreateParceiroJuridico(@RequestBody @Valid ParceiroJuridicoDTO dto) {
 
 		parceiroService.saveJuridico(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -81,7 +81,7 @@ public class ParceiroController {
 
 	// Atualizar parceiro físico
 	@PutMapping("/fisico/{id}")
-	public ResponseEntity<?> editarParceiroFisico(@PathVariable UUID id, @RequestBody @Valid ParceiroFisicoDTO dto) {
+	public ResponseEntity<?> updateParceiroFisico(@PathVariable UUID id, @RequestBody @Valid ParceiroFisicoDTO dto) {
 
 		// Realiza a validação
 		List<String> erros = parceiroService.fisicoUniqueAttributeValidation(dto);
@@ -96,7 +96,7 @@ public class ParceiroController {
 
 	// Atualizar parceiro jurídico
 	@PutMapping("/juridico/{id}")
-	public ResponseEntity<?> editarParceiroJuridico(@PathVariable UUID id, @RequestBody @Valid ParceiroJuridicoDTO dto) {
+	public ResponseEntity<?> upadateParceiroJuridico(@PathVariable UUID id, @RequestBody @Valid ParceiroJuridicoDTO dto) {
 
 		// Realiza a validação
 		List<String> erros = parceiroService.jurididicoUniqueAttributeValidation(dto);
@@ -111,7 +111,7 @@ public class ParceiroController {
 
 	// Excluir parceiro
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluirParceiro(@PathVariable UUID id) {
+	public ResponseEntity<Void> deleteParceiroById(@PathVariable UUID id) {
 		System.out.println("endpoint delete api parceiros id");
 		parceiroService.deleteById(id);
 		return ResponseEntity.noContent().build();
@@ -132,7 +132,7 @@ public class ParceiroController {
 	}
 
 	@PostMapping("/fisico/validar")
-	public ResponseEntity<?> validarParceiroFisico(@RequestBody @Valid ParceiroFisicoDTO dto) {
+	public ResponseEntity<?> validateParceiroFisico(@RequestBody @Valid ParceiroFisicoDTO dto) {
 		// Realiza a validação
 		List<String> erros = parceiroService.fisicoUniqueAttributeValidation(dto);
 
@@ -152,7 +152,7 @@ public class ParceiroController {
 	}
 
 	@PostMapping("/juridico/validar")
-	public ResponseEntity<?> validarParceiroJuridico(@RequestBody @Valid ParceiroJuridicoDTO dto) {
+	public ResponseEntity<?> validateParceiroJuridico(@RequestBody @Valid ParceiroJuridicoDTO dto) {
 		// Realiza a validação
 		List<String> erros = parceiroService.jurididicoUniqueAttributeValidation(dto);
 

@@ -1,124 +1,160 @@
 package br.com.supermidia.pessoa.colaborador;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.supermidia.pessoa.dominio.Fisica;
+import br.com.supermidia.pessoa.dominio.FisicaRepository;
+import br.com.supermidia.pessoa.dominio.Pessoa;
+import br.com.supermidia.pessoa.dominio.PessoaRepository;
+import br.com.supermidia.pessoa.dominio.PessoaService;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ColaboradorService {
-
+	@Autowired
+	private PessoaService pessoaService;
 	@Autowired
 	private ColaboradorRepository colaboradorRepository;
-
+	@Autowired
+	private PessoaRepository pessoaRepository;
+	@Autowired
+	private FisicaRepository fisicaRepository;
 	@Autowired
 	private ColaboradorMapper colaboradorMapper;
 
-	// Método para encontrar todos os colaboradores
+	@Transactional
+	public Colaborador save(ColaboradorDTO dto) {
+		Colaborador colaborador = colaboradorMapper.toColaborador(dto);
+		if (dto.getId() != null) {
+			Fisica fisica = fisicaRepository.findById(dto.getId()).get();
+			colaborador.setFisica(fisica);
+			if (colaboradorRepository.existsById(dto.getId())) {
+				colaborador.setId(dto.getId());
+			} else {
+				colaborador.setId(null);
+			}
+		}
+		return colaboradorRepository.save(colaborador);
+	}
+
+	@Transactional
+	public void update(UUID id, ColaboradorDTO colaboradorDTO) {
+		// Busca o colaborador existente
+		Colaborador colaborador = colaboradorRepository.findById(colaboradorDTO.getId())
+				.orElseThrow(() -> new IllegalArgumentException("Colaborador não encontrado."));
+		// Atualiza os dados do colaborador usando o mapper
+		colaboradorMapper.updateColaboradorFromDTO(colaboradorDTO, colaborador);
+		// Salva o colaborador atualizado
+		colaboradorRepository.save(colaborador);
+	}
+
+	@Transactional
+	public void deleteById(UUID colaboradorId) {
+		Colaborador colaborador = colaboradorRepository.findById(colaboradorId)
+				.orElseThrow(() -> new IllegalArgumentException("Colaborador não encontrado."));
+		Fisica fisica = fisicaRepository.findById(colaborador.getId())
+				.orElseThrow(() -> new IllegalArgumentException("Pessoa física não encontrada."));
+		if (pessoaService.colaboradorTemOutroPapel(fisica.getId())) {
+			colaboradorRepository.deleteById(colaborador.getId());
+			return;
+		} else {
+			colaboradorRepository.deleteById(colaborador.getId());
+			fisicaRepository.deleteById(colaborador.getId());
+			pessoaRepository.deleteById(colaborador.getId());
+			return;
+		}
+	}
+
 	public List<ColaboradorDTO> findAll() {
 		List<Colaborador> colaboradores = colaboradorRepository.findAll();
-		return colaboradores.stream().map(colaboradorMapper::toDto) // Usa o MapStruct para converter para DTO
-				.collect(Collectors.toList());
+		List<ColaboradorDTO> colaboradoresDTO = new ArrayList<>();
+		for (Colaborador colaborador : colaboradores) {
+			ColaboradorDTO dto = new ColaboradorDTO();
+			dto.setId(colaborador.getId());
+			dto.setNome(colaborador.getFisica().getNome());
+			dto.setEmail(colaborador.getFisica().getEmail());
+			dto.setTelefone(colaborador.getFisica().getTelefone());
+			dto.setMunicipio(colaborador.getFisica().getMunicipio());
+			dto.setUf(colaborador.getFisica().getUf());
+			colaboradoresDTO.add(dto);
+		}
+		return colaboradoresDTO;
 	}
 
-	// Método para encontrar um colaborador por ID e retornar um DTO
-	public ColaboradorDTO dtoFindById(UUID id) {
-		return colaboradorRepository.findById(id).map(colaboradorMapper::toDto)
-				.orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
-	}
-	
-	// Método para encontrar todos colaboradores não usuários e retornar um DTO
-	public List<ColaboradorDTO> dtoFindAllNotUser() {
-	    List<Colaborador> colaboradores = colaboradorRepository.findAll();
-	    return colaboradores.stream()
-	            .filter(colaborador -> colaborador.getUsuario() == null)
-	            .map(colaboradorMapper::toDto)
-	            .collect(Collectors.toList());
+	public ColaboradorDTO findById(UUID id) {
+		// Buscar o colaborador pelo ID
+		Colaborador colaborador = colaboradorRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Colaborador não encontrado com o ID: " + id));
+		// Mapear o colaborador e a entidade Fisica para ColaboradorDTO
+		return colaboradorMapper.toColaboradorDTO(colaborador.getFisica(), colaborador);
 	}
 
-
-	// Buscar a entity Colaborador por ID (para fins de atualização)
-	public Colaborador findById(UUID id) {
-		return colaboradorRepository.findById(id).orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
-	}
-
-	// Atualizar o colaborador existente com os dados do ColaboradorDTO
-	public Colaborador update(Colaborador colaboradorExistente, ColaboradorDTO colaboradorDTO) {
-		validarAtributosUnicos(colaboradorDTO, colaboradorExistente.getId());
-		colaboradorMapper.updateEntityFromDto(colaboradorDTO, colaboradorExistente);
-		return colaboradorRepository.save(colaboradorExistente);
-	}
-
-	// Método para salvar um ColaboradorDTO (conversão do DTO para entity)
-	public Colaborador save(ColaboradorDTO colaboradorDTO, UUID id) {
-
-		validarAtributosUnicos(colaboradorDTO, id);
-
-		try {
-			Colaborador colaborador = colaboradorMapper.toEntity(colaboradorDTO);
-			return colaboradorRepository.save(colaborador);
-		} catch (DataIntegrityViolationException ex) {
-			throw new IllegalArgumentException("Erro ao salvar: campo duplicado ou dados inválidos.", ex);
+	public List<String> uniqueAttributeValidation(ColaboradorDTO colaboradorDTO) {
+		List<String> erros = new ArrayList<>();
+		if (colaboradorDTO.getId() == null) {
+			uniquenessValidation(colaboradorDTO.getNome(), null, "nome", valor -> pessoaRepository.existsByNome(valor),
+					erros);
+			uniquenessValidation(colaboradorDTO.getEmail(), null, "email",
+					valor -> pessoaRepository.existsByEmail(valor), erros);
+			uniquenessValidation(colaboradorDTO.getTelefone(), null, "telefone",
+					valor -> pessoaRepository.existsByTelefone(valor), erros);
+			uniquenessValidation(colaboradorDTO.getRg(), null, "rg", valor -> fisicaRepository.existsByRg(valor),
+					erros);
+			uniquenessValidation(colaboradorDTO.getCpf(), null, "cpf", valor -> fisicaRepository.existsByCpf(valor),
+					erros);
+			return erros;
+		} else {
+			UUID id = colaboradorDTO.getId();
+			uniquenessValidation(colaboradorDTO.getNome(), id, "nome",
+					valor -> pessoaRepository.existsByNomeAndIdNot(valor, id), erros);
+			uniquenessValidation(colaboradorDTO.getEmail(), id, "email",
+					valor -> pessoaRepository.existsByEmailAndIdNot(valor, id), erros);
+			uniquenessValidation(colaboradorDTO.getTelefone(), id, "telefone",
+					valor -> pessoaRepository.existsByTelefoneAndIdNot(valor, id), erros);
+			uniquenessValidation(colaboradorDTO.getRg(), id, "rg",
+					valor -> fisicaRepository.existsByRgAndIdNot(valor, id), erros);
+			uniquenessValidation(colaboradorDTO.getCpf(), id, "cpf",
+					valor -> fisicaRepository.existsByCpfAndIdNot(valor, id), erros);
+			return erros;
 		}
 	}
 
-	// Método para deletar um colaborador por ID
-	public void delete(UUID id) {
-		colaboradorRepository.deleteById(id);
-	}
-
-	private void validarAtributosUnicos(ColaboradorDTO colaboradorDTO, UUID id) {
-		validarUnicidade(colaboradorDTO.getNome(), id, "Nome", colaboradorRepository::getByFisicaNome);
-		validarUnicidade(colaboradorDTO.getEmail(), id, "Email", colaboradorRepository::getByFisicaEmail);
-		validarUnicidade(colaboradorDTO.getTelefone(), id, "Telefone", colaboradorRepository::getByFisicaTelefone);
-		validarUnicidade(colaboradorDTO.getRg(), id, "RG", colaboradorRepository::getByFisicaRg);
-		validarUnicidade(colaboradorDTO.getCpf(), id, "CPF", colaboradorRepository::getByFisicaCpf);
-		validarUnicidade(colaboradorDTO.getCtps(), id, "CTPS", colaboradorRepository::getByCtps);
-	}
-
-	private void validarUnicidade(String valor, UUID id, String campo, Function<String, Colaborador> buscaPorCampo) {
-		if (valor == null)
-			return;
-		Colaborador existente = buscaPorCampo.apply(valor);
-		if (existente != null && (id == null || !existente.getId().equals(id))) {
-			lançarExceçãoDuplicado(campo, valor);
+	private void uniquenessValidation(String valor, UUID id, String campo, Function<String, Boolean> verificaUnicidade,
+			List<String> erros) {
+		if (valor == null || valor.isBlank()) {
+			return; // Ignora valores nulos ou vazios
+		}
+		// Verifica se o valor já existe no banco
+		boolean duplicado = verificaUnicidade.apply(valor);
+		// Adiciona mensagem de erro à lista, em vez de lançar exceção
+		if (duplicado) {
+			erros.add(campo.toUpperCase() + " " + valor + " já está cadastrado");
 		}
 	}
-	
-	public void validarAtributoUnico(String campo, String valor, UUID id) {
-	    if (valor == null || valor.isBlank()) {
-	        throw new IllegalArgumentException("O valor para validação não pode ser nulo ou vazio.");
-	    }
 
-	    switch (campo.toLowerCase()) {
-	        case "nome":
-	            validarUnicidade(valor, id, "Nome", colaboradorRepository::getByFisicaNome);
-	            break;
-	        case "email":
-	            validarUnicidade(valor, id, "Email", colaboradorRepository::getByFisicaEmail);
-	            break;
-	        case "telefone":
-	            validarUnicidade(valor, id, "Telefone", colaboradorRepository::getByFisicaTelefone);
-	            break;
-	        case "cpf":
-	            validarUnicidade(valor, id, "CPF", colaboradorRepository::getByFisicaCpf);
-	            break;
-	        case "rg":
-	            validarUnicidade(valor, id, "RG", colaboradorRepository::getByFisicaRg);
-	            break;
-	        case "ctps":
-	            validarUnicidade(valor, id, "CTPS", colaboradorRepository::getByCtps);
-	            break;
-	        default:
-	            throw new IllegalArgumentException("Campo inválido para validação: " + campo);
-	    }
+	public boolean existsById(UUID id) {
+		return colaboradorRepository.existsById(id);
 	}
 
-	private void lançarExceçãoDuplicado(String campo, String valor) {
-		throw new IllegalArgumentException(campo + " já cadastrado: " + valor);
+	public ColaboradorDTO findPessoaFisicaById(UUID id) {
+		// Buscar a pessoa independente do tipo
+		Pessoa pessoa = pessoaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
+		// Verificar se a pessoa é do tipo correto
+		if (!"FÍSICA".equals(pessoa.getTipo())) {
+			throw new IllegalStateException("Pessoa selecionada não é Física.");
+		}
+		Fisica fisica = fisicaRepository.findById(id).get();
+		Colaborador colaborador = new Colaborador();
+		colaborador.setId(id);
+		// Mapear para ColaboradorDTO
+		return colaboradorMapper.toColaboradorDTO(fisica, colaborador);
 	}
 }

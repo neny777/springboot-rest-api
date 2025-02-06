@@ -26,6 +26,7 @@ public class ParceiroFisicoDTO extends ParceiroDTO {
 	@Size(max = 70, message = "O e-mail deve ter no máximo 70 caracteres.")
 	@Convert(converter = LowercaseConverter.class)
 	private String email;
+	@NotNull(message = "O telefone é obrigatório.")
 	@Size(max = 15, message = "O telefone deve ter no máximo 15 caracteres.")
 	private String telefone;
 	@Size(max = 9, message = "O cep deve ter no máximo 9 caracteres.")
